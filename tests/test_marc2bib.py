@@ -15,7 +15,7 @@ def hargittai_reader(request):
 
 
 def test_general_tagfuncs(hargittai_reader):
-    mock = ("@book{Hargittai2009,\n"
+    bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
             " title = {Symmetry through the eyes of a chemist},\n"
@@ -23,10 +23,10 @@ def test_general_tagfuncs(hargittai_reader):
             "}\n\n")
 
     rec = next(hargittai_reader)
-    assert convert(rec, 'book') == mock
+    assert convert(rec, 'book') == bibtex
 
 def test_custom_tagfuncs(hargittai_reader):
-    mock = ("@book{Hargittai2009,\n"
+    bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
             " title = {Meow.},\n" # Rawr!
@@ -35,10 +35,10 @@ def test_custom_tagfuncs(hargittai_reader):
 
     rec = next(hargittai_reader)
     custom_tagfuncs = dict(title=lambda _: 'Meow.')
-    assert convert(rec, 'book', tagfuncs=custom_tagfuncs) == mock
+    assert convert(rec, 'book', tagfuncs=custom_tagfuncs) == bibtex
 
 def test_extend_tagfuncs(hargittai_reader):
-    mock = ("@book{Hargittai2009,\n"
+    bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
             " title = {Symmetry through the eyes of a chemist},\n"
@@ -49,10 +49,10 @@ def test_extend_tagfuncs(hargittai_reader):
 
     rec = next(hargittai_reader)
     new_tagfuncs = dict(url=lambda x: x['856']['u'])
-    assert convert(rec, 'book', tagfuncs=new_tagfuncs) == mock
+    assert convert(rec, 'book', tagfuncs=new_tagfuncs) == bibtex
 
 def test_new_bibkey(hargittai_reader):
-    mock = ("@book{Hargittai2009Symmetry,\n"
+    bibtex = ("@book{Hargittai2009Symmetry,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
             " title = {Symmetry through the eyes of a chemist},\n"
@@ -60,4 +60,4 @@ def test_new_bibkey(hargittai_reader):
             "}\n\n")
 
     rec = next(hargittai_reader)
-    assert convert(rec, 'book', bibkey='Hargittai2009Symmetry') == mock
+    assert convert(rec, 'book', bibkey='Hargittai2009Symmetry') == bibtex
