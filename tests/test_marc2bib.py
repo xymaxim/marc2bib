@@ -34,6 +34,7 @@ def test_custom_bibtype(hargittai_reader):
               " title = {Symmetry through the eyes of a chemist},\n"
               " year = {2009}\n"
               "}\n")
+
     rec = next(hargittai_reader)
     assert convert(rec, bibtype='BOOK') == bibtex
 
@@ -76,3 +77,11 @@ def test_new_bibkey(hargittai_reader):
 
     rec = next(hargittai_reader)
     assert convert(rec, bibkey='Hargittai2009Symmetry') == bibtex
+
+def test_not_str_tagfunc_return(hargittai_reader):
+    rec = next(hargittai_reader)
+    def yay_func(_): return None
+    with pytest.raises(TypeError) as excinfo:
+        convert(rec, tagfuncs={'yay': yay_func})
+    excmsg = str(excinfo.value)
+    assert ('yay_func' and 'yay') in excmsg
