@@ -1,7 +1,5 @@
 __all__ = ['convert']
 
-from bibtexparser.bwriter import BibTexWriter
-from bibtexparser.bibdatabase import BibDatabase
 from pymarc import MARCReader
 
 
@@ -33,6 +31,13 @@ BOOK_TAGFUNCS = {
 }
 
 
+def _as_bibtex(bibtype, bibkey, fields):
+    bibtex = '@{0}{{{1}'.format(bibtype, bibkey)
+    for tag, value in sorted(fields.items()):
+        bibtex += ',\n {0} = {{{1}}}'.format(tag, value)
+    bibtex += '\n}\n'
+    return bibtex
+
 def convert(record, bibtype='book', bibkey=None, tagfuncs=None):
     tagfuncs_ = BOOK_TAGFUNCS.copy()
     if tagfuncs:
@@ -42,10 +47,8 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None):
         surname = get_author(record).split(',')[0].split()[-1]
         bibkey = surname + get_year(record)
 
-    entry = {'ENTRYTYPE': bibtype, 'ID': bibkey}
-    for (tag, func) in tagfuncs_.items():
-        entry[tag] = func(record)
+    fields = {}
+    for tag, func in tagfuncs_.items():
+        fields[tag] = func(record)
 
-    db = BibDatabase()
-    db.entries.append(entry)
-    return BibTexWriter().write(db)
+    return _as_bibtex(bibtype, bibkey, fields)
