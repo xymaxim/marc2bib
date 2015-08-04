@@ -23,8 +23,8 @@ As *always*, use pip_ to install the latest release from PyPI:
 Or for development:
 
 .. code:: sh
-	
-	$ git clone https://github.com/mstolyarchuk/marc2bib	
+
+	$ git clone https://github.com/mstolyarchuk/marc2bib
 	$ pip install -e marc2bib
 
 Quickstart
@@ -47,7 +47,7 @@ Now we are going to read some data from a MARC file and easily convert it to a B
           ...
           @book{Hargittai2009,
            author = {I. Hargittai, M. Hargittai},
-          . . .
+           . . .
           }
 
 And that is it!

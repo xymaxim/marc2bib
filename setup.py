@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='marc2bib',
-    version='0.1.1',
+    version='0.1.2',
     url='https://github.com/mstolyarchuk/marc2bib',
     author='Maxim Stolyarchuk',
     author_email='maxim.stolyarchuk@gmail.com',
@@ -12,7 +12,6 @@ setup(
     zip_safe=False,
     install_requires=[
         'pymarc',
-        'bibtexparser',
     ],
     py_modules=['marc2bib'],
     classifiers=[
