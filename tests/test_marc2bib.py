@@ -18,6 +18,7 @@ def test_general_tagfuncs(hargittai_reader):
     bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
+            " publisher = {Springer},\n"
             " title = {Symmetry through the eyes of a chemist},\n"
             " year = {2009}\n"
             "}\n\n")
@@ -29,6 +30,7 @@ def test_custom_tagfuncs(hargittai_reader):
     bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
+            " publisher = {Springer},\n"
             " title = {Meow.},\n" # Rawr!
             " year = {2009}\n"
             "}\n\n")
@@ -41,6 +43,7 @@ def test_extend_tagfuncs(hargittai_reader):
     bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
+            " publisher = {Springer},\n"
             " title = {Symmetry through the eyes of a chemist},\n"
             # Meet url, a new entry tag.
             " url = {http://dx.doi.org/10.1007/978-1-4020-5628-4},\n"
@@ -55,6 +58,7 @@ def test_new_bibkey(hargittai_reader):
     bibtex = ("@book{Hargittai2009Symmetry,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
+            " publisher = {Springer},\n"
             " title = {Symmetry through the eyes of a chemist},\n"
             " year = {2009}\n"
             "}\n\n")

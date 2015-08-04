@@ -6,30 +6,35 @@ from pymarc import MARCReader
 
 
 def get_author(record):
-    value = record['245']['c']
-    return value.rstrip('.')
+    val = record['245']['c']
+    return val.rstrip('.')
 
 def get_edition(record):
     return record['250']['a']
 
+def get_publisher(record):
+    val = record['260']['b']
+    return val.strip(',')
+
 def get_title(record):
-    value = record['245']['a']
-    return value.rstrip(' /')
+    val = record['245']['a']
+    return val.rstrip('/')
 
 def get_year(record):
     val = record['260']['c']
     return val[1:-1]
 
-DEFAULT_TAGFUNCS = {
+BOOK_TAGFUNCS = {
     'author': get_author,
     'edition': get_edition,
+    'publisher': get_publisher,
     'title': get_title,
     'year': get_year,
 }
 
 
-def convert(record, bibtype, bibkey=None, tagfuncs=None):
-    tagfuncs_ = DEFAULT_TAGFUNCS.copy()
+def convert(record, bibtype='BOOK', bibkey=None, tagfuncs=None):
+    tagfuncs_ = BOOK_TAGFUNCS.copy()
     if tagfuncs:
         tagfuncs_.update(tagfuncs)
 
