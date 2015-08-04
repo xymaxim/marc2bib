@@ -32,7 +32,7 @@ Quickstart
 
 If you have not used ``pymarc`` before, nothing to worry about.
 
-Now we are going to read some data from a MARC file and easily convert it to a BiBTeX entry:
+Now we are going to read some data from a MARC file and easily convert it to a BibTeX entry:
 
 .. code:: python
 
