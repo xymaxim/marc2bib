@@ -10,7 +10,10 @@ setup(
     description='',
     long_description=__doc__,
     zip_safe=False,
-    include_package_data=True,
+    install_requires=[
+        'pymarc',
+        'bibtexparser',
+    ],
     py_modules=['marc2bib'],
     classifiers=[
         'Development Status :: 4 - Beta',
