@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.4"
+install:
+  - pip install --upgrade pip
+  - pip install -q pytest
+  - pip install -e .
+script:
+  - py.test tests
+notifications:
+  email:
+    recipients:
+      - maxim.stolyarchuk@gmail.com
+    on_success: change
+    on_failure: change
