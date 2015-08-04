@@ -5,10 +5,6 @@ from bibtexparser.bibdatabase import BibDatabase
 from pymarc import MARCReader
 
 
-def get_title(record):
-    value = record['245']['a']
-    return value.rstrip(' /')
-
 def get_author(record):
     value = record['245']['c']
     return value.rstrip('.')
@@ -16,14 +12,18 @@ def get_author(record):
 def get_edition(record):
     return record['250']['a']
 
+def get_title(record):
+    value = record['245']['a']
+    return value.rstrip(' /')
+
 def get_year(record):
     val = record['260']['c']
     return val[1:-1]
 
 DEFAULT_TAGFUNCS = {
-    'title': get_title,
     'author': get_author,
     'edition': get_edition,
+    'title': get_title,
     'year': get_year,
 }
 
