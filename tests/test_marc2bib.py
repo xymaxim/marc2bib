@@ -21,7 +21,7 @@ def test_default_book_tagfuncs(hargittai_reader):
             " publisher = {Springer},\n"
             " title = {Symmetry through the eyes of a chemist},\n"
             " year = {2009}\n"
-            "}\n\n")
+            "}\n")
 
     rec = next(hargittai_reader)
     assert convert(rec) == bibtex
@@ -33,7 +33,7 @@ def test_custom_bibtype(hargittai_reader):
               " publisher = {Springer},\n"
               " title = {Symmetry through the eyes of a chemist},\n"
               " year = {2009}\n"
-              "}\n\n")
+              "}\n")
     rec = next(hargittai_reader)
     assert convert(rec, bibtype='BOOK') == bibtex
 
@@ -44,7 +44,7 @@ def test_custom_tagfuncs(hargittai_reader):
             " publisher = {Springer},\n"
             " title = {Meow.},\n" # Rawr!
             " year = {2009}\n"
-            "}\n\n")
+            "}\n")
 
     rec = next(hargittai_reader)
     custom_tagfuncs = dict(title=lambda _: 'Meow.')
@@ -59,7 +59,7 @@ def test_extend_tagfuncs(hargittai_reader):
             # Meet url, a new entry tag.
             " url = {http://dx.doi.org/10.1007/978-1-4020-5628-4},\n"
             " year = {2009}\n"
-            "}\n\n")
+            "}\n")
 
     rec = next(hargittai_reader)
     new_tagfuncs = dict(url=lambda x: x['856']['u'])
@@ -72,7 +72,7 @@ def test_new_bibkey(hargittai_reader):
             " publisher = {Springer},\n"
             " title = {Symmetry through the eyes of a chemist},\n"
             " year = {2009}\n"
-            "}\n\n")
+            "}\n")
 
     rec = next(hargittai_reader)
     assert convert(rec, bibkey='Hargittai2009Symmetry') == bibtex
