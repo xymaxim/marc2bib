@@ -1,5 +1,4 @@
 import pytest
-
 from pymarc import MARCReader
 
 from marc2bib import convert
@@ -13,6 +12,7 @@ def hargittai_reader(request):
         reader.close()
     request.addfinalizer(fin)
     return reader
+
 
 def test_general_tagfuncs(hargittai_reader):
     mock = ("@book{Hargittai2009,\n"

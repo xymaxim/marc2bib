@@ -43,5 +43,4 @@ def convert(record, bibtype, bibkey=None, tagfuncs=None):
 
     db = BibDatabase()
     db.entries.append(entry)
-
     return BibTexWriter().write(db)
