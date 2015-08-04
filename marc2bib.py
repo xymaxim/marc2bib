@@ -33,7 +33,7 @@ BOOK_TAGFUNCS = {
 }
 
 
-def convert(record, bibtype='BOOK', bibkey=None, tagfuncs=None):
+def convert(record, bibtype='book', bibkey=None, tagfuncs=None):
     tagfuncs_ = BOOK_TAGFUNCS.copy()
     if tagfuncs:
         tagfuncs_.update(tagfuncs)

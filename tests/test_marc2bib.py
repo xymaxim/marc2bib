@@ -14,7 +14,7 @@ def hargittai_reader(request):
     return reader
 
 
-def test_general_tagfuncs(hargittai_reader):
+def test_default_book_tagfuncs(hargittai_reader):
     bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
@@ -24,7 +24,18 @@ def test_general_tagfuncs(hargittai_reader):
             "}\n\n")
 
     rec = next(hargittai_reader)
-    assert convert(rec, 'book') == bibtex
+    assert convert(rec) == bibtex
+
+def test_custom_bibtype(hargittai_reader):
+    bibtex = ("@BOOK{Hargittai2009,\n"
+              " author = {I. Hargittai, M. Hargittai},\n"
+              " edition = {3rd ed.},\n"
+              " publisher = {Springer},\n"
+              " title = {Symmetry through the eyes of a chemist},\n"
+              " year = {2009}\n"
+              "}\n\n")
+    rec = next(hargittai_reader)
+    assert convert(rec, bibtype='BOOK') == bibtex
 
 def test_custom_tagfuncs(hargittai_reader):
     bibtex = ("@book{Hargittai2009,\n"
@@ -37,7 +48,7 @@ def test_custom_tagfuncs(hargittai_reader):
 
     rec = next(hargittai_reader)
     custom_tagfuncs = dict(title=lambda _: 'Meow.')
-    assert convert(rec, 'book', tagfuncs=custom_tagfuncs) == bibtex
+    assert convert(rec, tagfuncs=custom_tagfuncs) == bibtex
 
 def test_extend_tagfuncs(hargittai_reader):
     bibtex = ("@book{Hargittai2009,\n"
@@ -52,7 +63,7 @@ def test_extend_tagfuncs(hargittai_reader):
 
     rec = next(hargittai_reader)
     new_tagfuncs = dict(url=lambda x: x['856']['u'])
-    assert convert(rec, 'book', tagfuncs=new_tagfuncs) == bibtex
+    assert convert(rec, tagfuncs=new_tagfuncs) == bibtex
 
 def test_new_bibkey(hargittai_reader):
     bibtex = ("@book{Hargittai2009Symmetry,\n"
@@ -64,4 +75,4 @@ def test_new_bibkey(hargittai_reader):
             "}\n\n")
 
     rec = next(hargittai_reader)
-    assert convert(rec, 'book', bibkey='Hargittai2009Symmetry') == bibtex
+    assert convert(rec, bibkey='Hargittai2009Symmetry') == bibtex
