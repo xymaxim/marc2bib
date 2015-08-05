@@ -1,3 +1,20 @@
+"""This is a main marc2bib package file.
+
+Make sure to check out the FAQ [1] for the MARC 21 at the Library of
+Congress (LOC) website. There is a lot information located on the main
+page [2] -- but first, take a look at a brief description and a summary
+of the MARC 21 fields [3]. While hacking on this package, you may also
+find useful both the full and concise versions of the "MARC 21 Format
+for Bibliographic Data" document [4]. Information regarding the BibTeX
+entry types and corresponding fields can be found in Section 3 of the
+original manual dated 1988 [5].
+
+[1] http://www.loc.gov/marc/faq.html
+[2] http://www.loc.gov/marc/
+[3] http://www.loc.gov/marc/umb/
+[4] http://www.loc.gov/marc/bibliographic/
+[5] http://ctan.uni-altai.ru/biblio/bibtex/base/btxdoc.pdf
+"""
 __all__ = ['convert']
 
 from pymarc import MARCReader
@@ -19,6 +36,7 @@ def get_title(record):
     return val.rstrip('/')
 
 def get_year(record):
+    # FIXME
     val = record['260']['c']
     return val[1:-1]
 
