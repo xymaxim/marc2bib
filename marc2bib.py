@@ -70,7 +70,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None):
     for tag, func in tagfuncs_.items():
         value = func(record)
         if not isinstance(value, str):
-            msg = ("Return value from {} for {} tag "
+            msg = ("Returned value from {} for {} tag "
                    "should be a string").format(func, tag)
             raise TypeError(msg)
         fields[tag] = func(record)
