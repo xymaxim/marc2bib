@@ -50,14 +50,14 @@ BOOK_TAGFUNCS = {
 }
 
 
-def _as_bibtex(bibtype, bibkey, fields):
+def _as_bibtex(bibtype, bibkey, fields, indent):
     bibtex = '@{0}{{{1}'.format(bibtype, bibkey)
     for tag, value in sorted(fields.items()):
-        bibtex += ',\n {0} = {{{1}}}'.format(tag, value)
+        bibtex += ',\n{0}{1} = {{{2}}}'.format(' ' * indent, tag, value)
     bibtex += '\n}\n'
     return bibtex
 
-def convert(record, bibtype='book', bibkey=None, tagfuncs=None):
+def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     tagfuncs_ = BOOK_TAGFUNCS.copy()
     if tagfuncs:
         tagfuncs_.update(tagfuncs)
@@ -75,4 +75,5 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None):
             raise TypeError(msg)
         fields[tag] = func(record)
 
-    return _as_bibtex(bibtype, bibkey, fields)
+    field_indent = kw.get('indent', 1)
+    return _as_bibtex(bibtype, bibkey, fields, field_indent)
