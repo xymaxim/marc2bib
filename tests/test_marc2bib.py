@@ -5,16 +5,15 @@ from marc2bib import convert
 
 
 @pytest.fixture(scope='function')
-def hargittai_reader(request):
+def rec_hargittai(request):
     reader = MARCReader(open('tests/hargittai2009.mrc', 'rb'),
                         to_unicode=True, force_utf8=True)
-    def fin():
-        reader.close()
-    request.addfinalizer(fin)
-    return reader
+    record = next(reader)
+    request.addfinalizer(reader.close)
+    return record
 
 
-def test_default_book_tagfuncs(hargittai_reader):
+def test_default_book_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
@@ -23,10 +22,9 @@ def test_default_book_tagfuncs(hargittai_reader):
             " year = {2009}\n"
             "}\n")
 
-    rec = next(hargittai_reader)
-    assert convert(rec) == bibtex
+    assert convert(rec_hargittai) == bibtex
 
-def test_custom_bibtype(hargittai_reader):
+def test_custom_bibtype(rec_hargittai):
     bibtex = ("@BOOK{Hargittai2009,\n"
               " author = {I. Hargittai, M. Hargittai},\n"
               " edition = {3rd ed.},\n"
@@ -35,10 +33,9 @@ def test_custom_bibtype(hargittai_reader):
               " year = {2009}\n"
               "}\n")
 
-    rec = next(hargittai_reader)
-    assert convert(rec, bibtype='BOOK') == bibtex
+    assert convert(rec_hargittai, bibtype='BOOK') == bibtex
 
-def test_custom_tagfuncs(hargittai_reader):
+def test_custom_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
@@ -47,11 +44,10 @@ def test_custom_tagfuncs(hargittai_reader):
             " year = {2009}\n"
             "}\n")
 
-    rec = next(hargittai_reader)
     custom_tagfuncs = dict(title=lambda _: 'Meow.')
-    assert convert(rec, tagfuncs=custom_tagfuncs) == bibtex
+    assert convert(rec_hargittai, tagfuncs=custom_tagfuncs) == bibtex
 
-def test_extend_tagfuncs(hargittai_reader):
+def test_extend_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
@@ -62,11 +58,10 @@ def test_extend_tagfuncs(hargittai_reader):
             " year = {2009}\n"
             "}\n")
 
-    rec = next(hargittai_reader)
     new_tagfuncs = dict(url=lambda x: x['856']['u'])
-    assert convert(rec, tagfuncs=new_tagfuncs) == bibtex
+    assert convert(rec_hargittai, tagfuncs=new_tagfuncs) == bibtex
 
-def test_new_bibkey(hargittai_reader):
+def test_new_bibkey(rec_hargittai):
     bibtex = ("@book{Hargittai2009Symmetry,\n"
             " author = {I. Hargittai, M. Hargittai},\n"
             " edition = {3rd ed.},\n"
@@ -75,13 +70,13 @@ def test_new_bibkey(hargittai_reader):
             " year = {2009}\n"
             "}\n")
 
-    rec = next(hargittai_reader)
-    assert convert(rec, bibkey='Hargittai2009Symmetry') == bibtex
+    assert convert(rec_hargittai, bibkey='Hargittai2009Symmetry') == bibtex
 
-def test_not_str_tagfunc_return(hargittai_reader):
-    rec = next(hargittai_reader)
+def test_not_str_tagfunc_return(rec_hargittai):
     def yay_func(_): return None
+
     with pytest.raises(TypeError) as excinfo:
-        convert(rec, tagfuncs={'yay': yay_func})
+        convert(rec_hargittai, tagfuncs={'yay': yay_func})
+
     excmsg = str(excinfo.value)
     assert ('yay_func' and 'yay') in excmsg
