@@ -6,6 +6,8 @@ from marc2bib import convert
 
 @pytest.fixture(scope='function')
 def rec_hargittai(request):
+    # This MARC file has been downloaded from
+    # http://pi.lib.uchicago.edu/1001/cat/bib/8888814
     reader = MARCReader(open('tests/hargittai2009.mrc', 'rb'),
                         to_unicode=True, force_utf8=True)
     request.addfinalizer(reader.close)
