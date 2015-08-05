@@ -39,7 +39,7 @@ def get_title(record):
 def get_year(record):
     # FIXME
     val = record['260']['c']
-    return val[1:-1]
+    return val.lstrip('c').rstrip('.')
 
 BOOK_TAGFUNCS = {
     'author': get_author,
