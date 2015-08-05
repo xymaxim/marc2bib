@@ -15,6 +15,7 @@ original manual dated 1988 [5].
 [4] http://www.loc.gov/marc/bibliographic/
 [5] http://ctan.uni-altai.ru/biblio/bibtex/base/btxdoc.pdf
 """
+
 __all__ = ['convert']
 
 from pymarc import MARCReader
