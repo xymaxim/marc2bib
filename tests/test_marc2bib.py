@@ -8,9 +8,8 @@ from marc2bib import convert
 def rec_hargittai(request):
     reader = MARCReader(open('tests/hargittai2009.mrc', 'rb'),
                         to_unicode=True, force_utf8=True)
-    record = next(reader)
     request.addfinalizer(reader.close)
-    return record
+    return next(reader)
 
 
 def test_default_book_tagfuncs(rec_hargittai):
