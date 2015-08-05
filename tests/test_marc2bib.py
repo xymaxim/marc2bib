@@ -79,5 +79,15 @@ def test_not_str_tagfunc_return(rec_hargittai):
     with pytest.raises(TypeError) as excinfo:
         convert(rec_hargittai, tagfuncs={'yay': yay_func})
 
-    excmsg = str(excinfo.value)
-    assert ('yay_func' and 'yay') in excmsg
+    assert ('yay_func' and 'yay') in str(excinfo.value)
+
+def test_different_indent(rec_hargittai):
+    bibtex = ("@book{Hargittai2009,\n"
+              "  author = {I. Hargittai, M. Hargittai},\n"
+              "  edition = {3rd ed.},\n"
+              "  publisher = {Springer},\n"
+              "  title = {Symmetry through the eyes of a chemist},\n"
+              "  year = {2009}\n"
+              "}\n")
+
+    assert convert(rec_hargittai, indent=2) == bibtex
