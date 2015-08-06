@@ -18,8 +18,14 @@ original manual dated 1988 [5].
 
 __all__ = ['convert']
 
+from functools import reduce
+
 from pymarc import MARCReader
 
+
+def get_address(record):
+    val = record['260']['a']
+    return val.replace('[', '').replace(']', '').rstrip(' : ')
 
 def get_author(record):
     val = record['245']['c']
@@ -41,12 +47,16 @@ def get_year(record):
     val = record['260']['c']
     return val.lstrip('c').rstrip('.')
 
-BOOK_TAGFUNCS = {
+BOOK_REQ_TAGFUNCS = {
     'author': get_author,
-    'edition': get_edition,
     'publisher': get_publisher,
     'title': get_title,
     'year': get_year,
+}
+
+BOOK_ADD_TAGFUNCS = {
+    'address': get_address,
+    'edition': get_edition,
 }
 
 
@@ -58,7 +68,23 @@ def _as_bibtex(bibtype, bibkey, fields, indent):
     return bibtex
 
 def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
-    tagfuncs_ = BOOK_TAGFUNCS.copy()
+    tagfuncs_ = BOOK_REQ_TAGFUNCS.copy()
+
+    include_arg = kw.get('include', 'all')
+    if include_arg == 'all':
+        tagfuncs_.update(BOOK_ADD_TAGFUNCS)
+    elif include_arg != 'required':
+        # Check if include argument is iterable.
+        try:
+            iter(include_arg)
+        except TypeError:
+            raise ValueError("include should be a string or "
+                             "an iterable, got {}".format(include_arg))
+        else:
+            tagsfuncs_to_include = {tag: BOOK_ADD_TAGFUNCS[tag]
+                                    for tag in include_arg}
+            tagfuncs_.update(tagsfuncs_to_include)
+
     if tagfuncs:
         tagfuncs_.update(tagfuncs)
 
