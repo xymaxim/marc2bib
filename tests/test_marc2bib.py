@@ -149,7 +149,7 @@ def test_invalid_include_should_raises(rec_hargittai):
     with pytest.raises(TypeError):
         convert(rec_hargittai, include=None)
 
-def test_unknown_include_sring(rec_hargittai):
+def test_unknown_include_string(rec_hargittai):
     with pytest.raises(AssertionError):
         convert(rec_hargittai, include='unknown')
 
