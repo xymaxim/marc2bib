@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='marc2bib',
-    version='0.1.3',
+    version='0.1.4',
     url='https://github.com/mstolyarchuk/marc2bib',
     author='Maxim Stolyarchuk',
     author_email='maxim.stolyarchuk@gmail.com',
