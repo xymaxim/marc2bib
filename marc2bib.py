@@ -74,13 +74,24 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     if include_arg == 'all':
         tagfuncs_.update(BOOK_ADD_TAGFUNCS)
     elif include_arg != 'required':
-        # Check if include argument is iterable.
+        # Check if include argument is iterable and not a string.
+        # We are no longer interested in a string because all
+        # possible values are already passed.
         try:
+            assert not isinstance(include_arg, str)
             iter(include_arg)
-        except TypeError:
-            raise ValueError("include should be a string or "
-                             "an iterable, got {}".format(include_arg))
+        except (AssertionError, TypeError) as e:
+            msg = ("include should be an iterable or one of "
+                   "('required', 'all'), got {}".format(include_arg))
+            e.args += (msg,)
+            # XXX ValueError or something like that, actually.
+            raise
         else:
+            req_tags = list(BOOK_REQ_TAGFUNCS.keys())
+            add_tags = list(BOOK_ADD_TAGFUNCS.keys())
+            if not set(include_arg).issubset(req_tags + add_tags):
+                raise ValueError("include contains unknown tag(s)")
+
             tagsfuncs_to_include = {tag: BOOK_ADD_TAGFUNCS[tag]
                                     for tag in include_arg}
             tagfuncs_.update(tagsfuncs_to_include)

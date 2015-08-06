@@ -146,5 +146,13 @@ def test_custom_tagfuncs_priority_over_include(rec_hargittai):
     assert rv == bibtex
 
 def test_invalid_include_should_raises(rec_hargittai):
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         convert(rec_hargittai, include=None)
+
+def test_unknown_include_sring(rec_hargittai):
+    with pytest.raises(AssertionError):
+        convert(rec_hargittai, include='unknown')
+
+def test_include_with_non_existent_tag(rec_hargittai):
+    with pytest.raises(ValueError):
+        convert(rec_hargittai, include=['non-existent'])
