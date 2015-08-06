@@ -16,6 +16,7 @@ def rec_hargittai(request):
 
 def test_default_book_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
+              " address = {Dordrecht},\n"
               " author = {I. Hargittai, M. Hargittai},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
@@ -27,6 +28,7 @@ def test_default_book_tagfuncs(rec_hargittai):
 
 def test_custom_bibtype(rec_hargittai):
     bibtex = ("@BOOK{Hargittai2009,\n"
+              " address = {Dordrecht},\n"
               " author = {I. Hargittai, M. Hargittai},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
@@ -38,6 +40,7 @@ def test_custom_bibtype(rec_hargittai):
 
 def test_custom_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
+              " address = {Dordrecht},\n"
               " author = {I. Hargittai, M. Hargittai},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
@@ -50,6 +53,7 @@ def test_custom_tagfuncs(rec_hargittai):
 
 def test_extend_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
+              " address = {Dordrecht},\n"
               " author = {I. Hargittai, M. Hargittai},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
@@ -64,6 +68,7 @@ def test_extend_tagfuncs(rec_hargittai):
 
 def test_new_bibkey(rec_hargittai):
     bibtex = ("@book{Hargittai2009Symmetry,\n"
+              " address = {Dordrecht},\n"
               " author = {I. Hargittai, M. Hargittai},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
@@ -83,6 +88,7 @@ def test_not_str_tagfunc_return(rec_hargittai):
 
 def test_different_indent(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
+              "  address = {Dordrecht},\n"
               "  author = {I. Hargittai, M. Hargittai},\n"
               "  edition = {3rd ed.},\n"
               "  publisher = {Springer},\n"
@@ -91,3 +97,62 @@ def test_different_indent(rec_hargittai):
               "}\n")
 
     assert convert(rec_hargittai, indent=2) == bibtex
+
+def test_include_only_required_fields(rec_hargittai):
+        bibtex = ("@book{Hargittai2009,\n"
+              " author = {I. Hargittai, M. Hargittai},\n"
+              " publisher = {Springer},\n"
+              " title = {Symmetry through the eyes of a chemist},\n"
+              " year = {2009}\n"
+              "}\n")
+
+        assert convert(rec_hargittai, include='required') == bibtex
+
+def test_also_include_edition_fields(rec_hargittai):
+    bibtex = ("@book{Hargittai2009,\n"
+              " author = {I. Hargittai, M. Hargittai},\n"
+              " edition = {3rd ed.},\n"
+              " publisher = {Springer},\n"
+              " title = {Symmetry through the eyes of a chemist},\n"
+              " year = {2009}\n"
+              "}\n")
+
+    assert convert(rec_hargittai, include=['edition']) == bibtex
+
+def test_include_both_required_and_additional_fields(rec_hargittai):
+    bibtex = ("@book{Hargittai2009,\n"
+              " address = {Dordrecht},\n"
+              " author = {I. Hargittai, M. Hargittai},\n"
+              " edition = {3rd ed.},\n"
+              " publisher = {Springer},\n"
+              " title = {Symmetry through the eyes of a chemist},\n"
+              " year = {2009}\n"
+              "}\n")
+
+    assert convert(rec_hargittai) == bibtex
+    assert convert(rec_hargittai, include='all') == bibtex
+
+def test_custom_tagfuncs_priority_over_include(rec_hargittai):
+    bibtex = ("@book{Hargittai2009,\n"
+              " author = {I. Hargittai, M. Hargittai},\n"
+              " publisher = {Springer},\n"
+              " tag = {value},\n"
+              " title = {Symmetry through the eyes of a chemist},\n"
+              " year = {2009}\n"
+              "}\n")
+
+    custom_tagfuncs = dict(tag=lambda _: 'value')
+    rv = convert(rec_hargittai, tagfuncs=custom_tagfuncs, include='required')
+    assert rv == bibtex
+
+def test_invalid_include_should_raises(rec_hargittai):
+    with pytest.raises(TypeError):
+        convert(rec_hargittai, include=None)
+
+def test_unknown_include_sring(rec_hargittai):
+    with pytest.raises(AssertionError):
+        convert(rec_hargittai, include='unknown')
+
+def test_include_with_non_existent_tag(rec_hargittai):
+    with pytest.raises(ValueError):
+        convert(rec_hargittai, include=['non-existent'])
