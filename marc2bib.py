@@ -124,10 +124,9 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
 
     if bibkey is None:
         try:
-            authors_or_editors = fields['author']
+            surname = fields['author'].split(',')[0]
         except KeyError:
-            authors_or_editors = fields['editor']
-        surname = authors_or_editors.split(',')[0]
+            surname = fields['editor'].split(',')[0]
         bibkey = surname + get_year(record)
 
 
