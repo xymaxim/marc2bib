@@ -8,8 +8,7 @@ from marc2bib import convert
 def rec_hargittai(request):
     # This MARC file has been downloaded from
     # http://pi.lib.uchicago.edu/1001/cat/bib/8888814
-    reader = MARCReader(open('tests/hargittai2009.mrc', 'rb'),
-                        to_unicode=True, force_utf8=True)
+    reader = MARCReader(open('tests/hargittai2009.mrc', 'rb'))
     request.addfinalizer(reader.close)
     return next(reader)
 
@@ -17,8 +16,7 @@ def rec_hargittai(request):
 def rec_lundqvist(request):
     # This MARC file has been downloaded from
     # http://pi.lib.uchicago.edu/1001/cat/bib/795566
-    reader = MARCReader(open('tests/lundqvist1983.mrc', 'rb'),
-                        to_unicode=True, force_utf8=True)
+    reader = MARCReader(open('tests/lundqvist1983.mrc', 'rb'))
     request.addfinalizer(reader.close)
     return next(reader)
 
