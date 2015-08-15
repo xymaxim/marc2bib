@@ -49,6 +49,10 @@ def get_title(record):
     title = record['245']['a']
     subtitle = record['245']['b']
     if subtitle:
+        # Remove the extra whitespace between the title and a colon,
+        # or append a colon to the title.
+        # (Title : subtitle -> Title: subtitle)
+        # (Title subtitle -> Title: subtitle)
         title = '{}: '.format(title.rsplit(' :')[0])
         rv = title + subtitle.rstrip('.')
     else:
