@@ -47,7 +47,7 @@ def get_publisher(record):
 
 def get_title(record):
     val = record['245']['a']
-    return val.rstrip('/')
+    return val.rstrip(' /')
 
 def get_year(record):
     # FIXME
@@ -124,9 +124,10 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
 
     if bibkey is None:
         try:
-            surname = fields['author'].split(',')[0]
+            authors_or_editors = fields['author']
         except KeyError:
-            surname = fields['editor'].split(',')[0]
+            authors_or_editors = fields['editor']
+        surname = authors_or_editors.split(',')[0]
         bibkey = surname + get_year(record)
 
 

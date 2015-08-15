@@ -168,7 +168,7 @@ def test_only_editors(rec_lundqvist):
     bibtex = ("@book{Lundqvist1983,\n"
               " editor = {Lundqvist, Stig and March, Norman H.},\n"
               " publisher = {Plenum Press},\n"
-              " title = {Theory of the inhomogeneous electron gas },\n"
+              " title = {Theory of the inhomogeneous electron gas},\n"
               " year = {1983}\n"
               "}\n")
 
