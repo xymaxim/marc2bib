@@ -173,3 +173,18 @@ def test_only_editors(rec_lundqvist):
               "}\n")
 
     assert convert(rec_lundqvist, include='required') == bibtex
+
+def test_subtitle():
+    bibtex = ("@book{ACSStyleGuide,\n"
+              " editor = {Coghill, Anne M. and Garson, Lorrin R.},\n"
+              " publisher = {American Chemical Society},\n"
+              " title = {The ACS style guide : effective communication of scientific information},\n"
+              " year = {2006}\n"
+              "}\n")
+
+    # This MARC file has been downloaded from
+    # http://pi.lib.uchicago.edu/1001/cat/bib/6095329
+    with open('tests/ACSStyleGuide.mrc', 'rb') as f:
+        rec = next(MARCReader(f))
+    rv = convert(rec, bibkey='ACSStyleGuide', include='required')
+    assert rv == bibtex

@@ -42,12 +42,17 @@ def get_editor(record):
     return ' and '.join(eds)
 
 def get_publisher(record):
-    val = record['260']['b']
-    return val.strip(',')
+    publishers = record['260'].get_subfields('b')
+    return publishers[0].rstrip(' ;').rstrip(',')
 
 def get_title(record):
-    val = record['245']['a']
-    return val.rstrip(' /')
+    title = record['245']['a']
+    subtitle = record['245']['b']
+    if subtitle is not None:
+        rv = '{} {}'.format(title, subtitle.strip('.'))
+    else:
+        rv = title.rstrip(' /')
+    return rv
 
 def get_year(record):
     # FIXME
