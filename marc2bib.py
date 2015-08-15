@@ -28,11 +28,18 @@ def get_address(record):
     return val.replace('[', '').replace(']', '').rstrip(' : ')
 
 def get_author(record):
-    val = record['245']['c']
-    return val.rstrip('.')
+    field = record['100']
+    if field is None:
+        return ''
+    else:
+        return field['a'].rstrip('.')
 
 def get_edition(record):
     return record['250']['a']
+
+def get_editor(record):
+    eds = [ed['a'].rstrip(',') for ed in record.get_fields('700')]
+    return ' and '.join(eds)
 
 def get_publisher(record):
     val = record['260']['b']
@@ -40,7 +47,7 @@ def get_publisher(record):
 
 def get_title(record):
     val = record['245']['a']
-    return val.rstrip('/')
+    return val.rstrip(' /')
 
 def get_year(record):
     # FIXME
@@ -99,18 +106,30 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     if tagfuncs:
         tagfuncs_.update(tagfuncs)
 
-    if bibkey is None:
-        surname = get_author(record).split(',')[0].split()[-1]
-        bibkey = surname + get_year(record)
-
     fields = {}
     for tag, func in tagfuncs_.items():
-        value = func(record)
-        if not isinstance(value, str):
+        field_value = func(record)
+        if not isinstance(field_value, str):
             msg = ("Returned value from {} for {} tag "
                    "should be a string").format(func, tag)
             raise TypeError(msg)
-        fields[tag] = func(record)
+        fields[tag] = field_value
+
+    if fields['author'] == '':
+        fields.pop('author')
+        try:
+            fields['editor'] = tagfuncs_['editor'](record)
+        except KeyError:
+            fields['editor'] = get_editor(record)
+
+    if bibkey is None:
+        try:
+            authors_or_editors = fields['author']
+        except KeyError:
+            authors_or_editors = fields['editor']
+        surname = authors_or_editors.split(',')[0]
+        bibkey = surname + get_year(record)
+
 
     field_indent = kw.get('indent', 1)
     return _as_bibtex(bibtype, bibkey, fields, field_indent)

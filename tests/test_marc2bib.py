@@ -8,8 +8,15 @@ from marc2bib import convert
 def rec_hargittai(request):
     # This MARC file has been downloaded from
     # http://pi.lib.uchicago.edu/1001/cat/bib/8888814
-    reader = MARCReader(open('tests/hargittai2009.mrc', 'rb'),
-                        to_unicode=True, force_utf8=True)
+    reader = MARCReader(open('tests/hargittai2009.mrc', 'rb'))
+    request.addfinalizer(reader.close)
+    return next(reader)
+
+@pytest.fixture(scope='function')
+def rec_lundqvist(request):
+    # This MARC file has been downloaded from
+    # http://pi.lib.uchicago.edu/1001/cat/bib/795566
+    reader = MARCReader(open('tests/lundqvist1983.mrc', 'rb'))
     request.addfinalizer(reader.close)
     return next(reader)
 
@@ -17,7 +24,7 @@ def rec_hargittai(request):
 def test_default_book_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
               " address = {Dordrecht},\n"
-              " author = {I. Hargittai, M. Hargittai},\n"
+              " author = {Hargittai, István},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
               " title = {Symmetry through the eyes of a chemist},\n"
@@ -29,7 +36,7 @@ def test_default_book_tagfuncs(rec_hargittai):
 def test_custom_bibtype(rec_hargittai):
     bibtex = ("@BOOK{Hargittai2009,\n"
               " address = {Dordrecht},\n"
-              " author = {I. Hargittai, M. Hargittai},\n"
+              " author = {Hargittai, István},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
               " title = {Symmetry through the eyes of a chemist},\n"
@@ -41,7 +48,7 @@ def test_custom_bibtype(rec_hargittai):
 def test_custom_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
               " address = {Dordrecht},\n"
-              " author = {I. Hargittai, M. Hargittai},\n"
+              " author = {Hargittai, István},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
               " title = {Meow.},\n" # Rawr!
@@ -54,7 +61,7 @@ def test_custom_tagfuncs(rec_hargittai):
 def test_extend_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
               " address = {Dordrecht},\n"
-              " author = {I. Hargittai, M. Hargittai},\n"
+              " author = {Hargittai, István},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
               " title = {Symmetry through the eyes of a chemist},\n"
@@ -69,7 +76,7 @@ def test_extend_tagfuncs(rec_hargittai):
 def test_new_bibkey(rec_hargittai):
     bibtex = ("@book{Hargittai2009Symmetry,\n"
               " address = {Dordrecht},\n"
-              " author = {I. Hargittai, M. Hargittai},\n"
+              " author = {Hargittai, István},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
               " title = {Symmetry through the eyes of a chemist},\n"
@@ -89,7 +96,7 @@ def test_not_str_tagfunc_return(rec_hargittai):
 def test_different_indent(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
               "  address = {Dordrecht},\n"
-              "  author = {I. Hargittai, M. Hargittai},\n"
+              "  author = {Hargittai, István},\n"
               "  edition = {3rd ed.},\n"
               "  publisher = {Springer},\n"
               "  title = {Symmetry through the eyes of a chemist},\n"
@@ -99,18 +106,18 @@ def test_different_indent(rec_hargittai):
     assert convert(rec_hargittai, indent=2) == bibtex
 
 def test_include_only_required_fields(rec_hargittai):
-        bibtex = ("@book{Hargittai2009,\n"
-              " author = {I. Hargittai, M. Hargittai},\n"
+    bibtex = ("@book{Hargittai2009,\n"
+              " author = {Hargittai, István},\n"
               " publisher = {Springer},\n"
               " title = {Symmetry through the eyes of a chemist},\n"
               " year = {2009}\n"
               "}\n")
 
-        assert convert(rec_hargittai, include='required') == bibtex
+    assert convert(rec_hargittai, include='required') == bibtex
 
 def test_also_include_edition_fields(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
-              " author = {I. Hargittai, M. Hargittai},\n"
+              " author = {Hargittai, István},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
               " title = {Symmetry through the eyes of a chemist},\n"
@@ -122,7 +129,7 @@ def test_also_include_edition_fields(rec_hargittai):
 def test_include_both_required_and_additional_fields(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
               " address = {Dordrecht},\n"
-              " author = {I. Hargittai, M. Hargittai},\n"
+              " author = {Hargittai, István},\n"
               " edition = {3rd ed.},\n"
               " publisher = {Springer},\n"
               " title = {Symmetry through the eyes of a chemist},\n"
@@ -134,7 +141,7 @@ def test_include_both_required_and_additional_fields(rec_hargittai):
 
 def test_custom_tagfuncs_priority_over_include(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
-              " author = {I. Hargittai, M. Hargittai},\n"
+              " author = {Hargittai, István},\n"
               " publisher = {Springer},\n"
               " tag = {value},\n"
               " title = {Symmetry through the eyes of a chemist},\n"
@@ -156,3 +163,13 @@ def test_unknown_include_string(rec_hargittai):
 def test_include_with_non_existent_tag(rec_hargittai):
     with pytest.raises(ValueError):
         convert(rec_hargittai, include=['non-existent'])
+
+def test_only_editors(rec_lundqvist):
+    bibtex = ("@book{Lundqvist1983,\n"
+              " editor = {Lundqvist, Stig and March, Norman H.},\n"
+              " publisher = {Plenum Press},\n"
+              " title = {Theory of the inhomogeneous electron gas},\n"
+              " year = {1983}\n"
+              "}\n")
+
+    assert convert(rec_lundqvist, include='required') == bibtex
