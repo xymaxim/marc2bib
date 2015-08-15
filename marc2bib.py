@@ -48,8 +48,9 @@ def get_publisher(record):
 def get_title(record):
     title = record['245']['a']
     subtitle = record['245']['b']
-    if subtitle is not None:
-        rv = '{} {}'.format(title, subtitle.strip('.'))
+    if subtitle:
+        title = '{}: '.format(title.rsplit(' :')[0])
+        rv = title + subtitle.rstrip('.')
     else:
         rv = title.rstrip(' /')
     return rv

@@ -178,7 +178,7 @@ def test_subtitle():
     bibtex = ("@book{ACSStyleGuide,\n"
               " editor = {Coghill, Anne M. and Garson, Lorrin R.},\n"
               " publisher = {American Chemical Society},\n"
-              " title = {The ACS style guide : effective communication of scientific information},\n"
+              " title = {The ACS style guide: effective communication of scientific information},\n"
               " year = {2006}\n"
               "}\n")
 
