@@ -141,9 +141,4 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         bibkey = surname + get_year(record)
 
     field_indent = kw.get('indent', 1)
-
-    if callable(bibkey):
-        rv = _as_bibtex(bibtype, bibkey(record), fields, field_indent)
-    else:
-        rv = _as_bibtex(bibtype, bibkey, fields, field_indent)
-    return rv
+    return _as_bibtex(bibtype, bibkey, fields, field_indent)

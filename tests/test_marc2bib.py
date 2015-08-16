@@ -85,12 +85,6 @@ def test_new_bibkey(rec_hargittai):
 
     assert convert(rec_hargittai, bibkey='Hargittai2009Symmetry') == bibtex
 
-def test_callable_bibkey(rec_hargittai):
-    def new_bibkey(rec): return rec['245']['a'].split()[0]
-
-    rv = convert(rec_hargittai, bibkey=new_bibkey, include='required')
-    assert rv.splitlines()[0] == '@book{Symmetry,'
-
 def test_not_str_tagfunc_return(rec_hargittai):
     def yay_func(_): return None
 
