@@ -97,6 +97,16 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         bibkey (Optional[str]): A BibTeX citation key. If ``None``, then
             the author-date style is used, e.g. "Hargittai2007". If the
             author is not provided, then the first editor will be used.
+        tagfuncs (Optional[dict]): A dictionary with functions used to
+            retrieve a BibTeX tag value. The key of the dictionary is
+            the name of a particular tag. Your function (we call this
+            "tagfunc") must take one argument, a reference to the given
+            record and return a string. Example usage::
+
+            def tagfunc(record):
+                # Insert your way to get the field value here.
+
+            convert(record, tagfuncs={'tag': tagfunc})
 
     Keyword args:
         include: Defaults to 'all'. The value can be either
