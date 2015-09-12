@@ -46,7 +46,7 @@ Now we are going to read some data from a MARC file and easily convert it to a B
           ...     print(convert(record)) # and, ta-da, convert it to a BibTeX entry.
           ...
           @book{Hargittai2009,
-           author = {I. Hargittai, M. Hargittai},
+           author = {Hargittai, István},
            . . .
           }
 
