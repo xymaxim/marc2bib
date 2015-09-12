@@ -85,6 +85,32 @@ def _as_bibtex(bibtype, bibkey, fields, indent):
     return bibtex
 
 def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
+    """Converts an instance of :class:`pymarc.Record` to a BibTeX entry.
+
+    By default all defined fields is returned. For the book entry see
+    keys in `BOOK_REQ_TAGFUNCS` and `BOOK_ADD_TAGFUNCS`. Use ``taguncs``
+    argument to extend or override returned tags. If you want to control
+    the returned tags, use ``include`` argument instead.
+
+    Args:
+        record: An instance of :class:`pymarc.Record`.
+        bibkey (Optional[str]): A BibTeX citation key. If ``None``, then
+            the author-date style is used, e.g. "Hargittai2007". If the
+            author is not provided, then the first editor will be used.
+
+    Keyword args:
+        include: Defaults to 'all'. The value can be either
+
+            * 'all' -- include all defined tags for the given ``bibtype``
+            * 'required' -- include only required tags for the given
+                            ``bibtype``
+            * a list of tags to include together with the required
+              ones. For example, ['edition'].
+        indent: The field line indentation. Defaults to 1.
+
+    Returns:
+        A BibTeX-formatted string.
+    """
     tagfuncs_ = BOOK_REQ_TAGFUNCS.copy()
 
     include_arg = kw.get('include', 'all')
