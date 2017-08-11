@@ -20,6 +20,14 @@ def rec_lundqvist(request):
     request.addfinalizer(reader.close)
     return next(reader)
 
+@pytest.fixture(scope='function')
+def rec_tsing(request):
+    # This MARC file has been downloaded from
+    # https://lccn.loc.gov/2014037624
+    reader = MARCReader(open('tests/tsing2015.mrc', 'rb'))
+    request.addfinalizer(reader.close)
+    return next(reader)
+
 
 def test_default_book_tagfuncs(rec_hargittai):
     bibtex = ("@book{Hargittai2009,\n"
@@ -188,3 +196,8 @@ def test_subtitle():
         rec = next(MARCReader(f))
     rv = convert(rec, bibkey='ACSStyleGuide', include='required')
     assert rv == bibtex
+
+def test_another_publication_field(rec_tsing):
+    bibtex = convert(rec_tsing)
+    assert " address = {Princeton}" in bibtex
+    assert " publisher = {Princeton University Press}" in bibtex

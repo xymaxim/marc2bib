@@ -4,4 +4,5 @@
 ve/
 dist/
 *.egg-info/
+.cache/
 __pycache__/

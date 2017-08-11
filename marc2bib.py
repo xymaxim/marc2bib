@@ -20,12 +20,13 @@ __all__ = ['convert']
 
 from functools import reduce
 
-from pymarc import MARCReader
+from pymarc import MARCReader, Record
 
 
 def get_address(record):
-    val = record['260']['a']
-    return val.replace('[', '').replace(']', '').rstrip(' : ')
+    field = record.get_fields('260', '264')[0]
+    address = field['a']
+    return address.replace('[', '').replace(']', '').rstrip(' : ')
 
 def get_author(record):
     field = record['100']
@@ -35,15 +36,18 @@ def get_author(record):
         return field['a'].rstrip('.')
 
 def get_edition(record):
-    return record['250']['a']
+    field = record.get_fields('250')
+    if field:
+        return field[0]['a']
+    else:
+        return ''
 
 def get_editor(record):
     eds = [ed['a'].rstrip(',') for ed in record.get_fields('700')]
     return ' and '.join(eds)
 
 def get_publisher(record):
-    publishers = record['260'].get_subfields('b')
-    return publishers[0].rstrip(' ;').rstrip(',')
+    return record.publisher().rstrip(',').rstrip(' ;')
 
 def get_title(record):
     title = record['245']['a']
@@ -60,9 +64,7 @@ def get_title(record):
     return rv
 
 def get_year(record):
-    # FIXME
-    val = record['260']['c']
-    return val.lstrip('c').rstrip('.')
+    return record.pubyear().lstrip('c').rstrip('.')
 
 BOOK_REQ_TAGFUNCS = {
     'author': get_author,
