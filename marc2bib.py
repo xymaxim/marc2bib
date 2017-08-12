@@ -82,40 +82,40 @@ BOOK_OPT_TAGFUNCS = {
 }
 
 def _as_bibtex(bibtype, bibkey, fields, indent, align=False):
-    if align:
-        tag_width = max(map(len, fields))
-    else:
-        tag_width = 0
+    tag_width = max(map(len, fields)) if align else 0
         
     bibtex = '@{0}{{{1}'.format(bibtype, bibkey)
     for tag, value in sorted(fields.items()):
         bibtex += ',\n{0}{1:<{width}} = {{{2}}}'.format(' ' * indent, tag, value, width=tag_width)
     bibtex += '\n}\n'
+    
     return bibtex
 
 def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     """Converts an instance of :class:`pymarc.Record` to a BibTeX entry.
 
-    By default all defined fields is returned. For the book entry see
-    keys in `BOOK_REQ_TAGFUNCS` and `BOOK_OPT_TAGFUNCS`. Use ``taguncs``
-    argument to extend or override returned tags. If you want to control
-    the returned tags, use ``include`` argument instead.
+    By default all defined fields (tags) for the given `bibtype` are
+    returned. For the book entry see keys in `BOOK_REQ_TAGFUNCS` and
+    `BOOK_OPT_TAGFUNCS`. Use ``tagfuncs`` argument to extend or
+    override returned tags. If you want to control the returned tags,
+    use ``include`` argument instead.
 
     Args:
         record: An instance of :class:`pymarc.Record`.
+        bibtype (Optional[str]): A BibTeX entry type. Currently only
+            book entries are fully supported.
         bibkey (Optional[str]): A BibTeX citation key. If ``None``, then
             the author-date style is used, e.g. "hargittai2007". If the
             author is not provided, then the first editor will be used.
         tagfuncs (Optional[dict]): A dictionary with functions used to
-            retrieve a BibTeX tag value. The key of the dictionary is
-            the name of a particular tag. Your function (we call this
-            "tagfunc") must take one argument, a reference to the given
-            record and return a string. Example usage::
+            retrieve a BibTeX tag content. The key of the dictionary
+            is the name of a particular tag. Your function (we call
+            this tag-function) must take one argument, a reference to
+            the given record, and return a string. Example usage::
 
             def tagfunc(record):
                 # Insert your way to get the field value here.
                 ...
-
             convert(record, tagfuncs={'tag': tagfunc})
 
     Keyword args:
@@ -126,8 +126,9 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
                             ``bibtype``
             * a list of tags to include together with the required
               ones. For example, ['edition'].
-        indent (int): The field line indentation. Defaults to 1.
-        align (bool): If True, align tag values by the longest tag. Default is False.
+        indent (int): The tag line indentation. Defaults to 1.
+        align (bool): If True, align tag values by the longest tag.
+            Defaults to False.
 
     Returns:
         A BibTeX-formatted string.
@@ -187,6 +188,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         surname = authors_or_editors.split(',')[0]
         bibkey = surname.lower() + get_year(record)
 
-    field_indent = kw.get('indent', 1)
+    indent = kw.get('indent', 1)
     align = kw.get('align', False)
-    return _as_bibtex(bibtype, bibkey, fields, field_indent, align=align)
+    
+    return _as_bibtex(bibtype, bibkey, fields, indent, align=align)
