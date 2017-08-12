@@ -40,3 +40,10 @@ def get_title(record):
 
 def get_year(record):
     return record.pubyear().lstrip('c').rstrip('.')
+
+def get_volume(record):
+    field = record['300']
+    if field:
+        return field['a']
+    else:
+        return None

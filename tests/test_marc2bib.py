@@ -20,6 +20,14 @@ def rec_tsing(request):
     request.addfinalizer(reader.close)
     return next(reader)
 
+@pytest.fixture(scope='function')
+def rec_sholokhov(request):
+    # This MARC file has been downloaded from
+    # https://lccn.loc.gov/60035484
+    reader = MARCReader(open('tests/sholokhov.mrc', 'rb'))
+    request.addfinalizer(reader.close)
+    return next(reader)
+
 
 def test_required_book_tags(rec_hargittai):
     bibtex = ("@book{hargittai2009,\n"
@@ -28,12 +36,11 @@ def test_required_book_tags(rec_hargittai):
               " title = {Symmetry through the eyes of a chemist},\n"
               " year = {2009}\n"
               "}\n")
-
     assert convert(rec_hargittai, include='required') == bibtex
 
 def test_custom_bibtype(rec_hargittai):
     output = convert(rec_hargittai, bibtype='BOOK')
-    assert '@BOOK{' in  output
+    assert '@BOOK{' in output
 
 def test_custom_tagfuncs(rec_hargittai):
     custom_tagfuncs = dict(title=lambda _: 'Meow')
@@ -115,3 +122,8 @@ def test_tag_values_alignment(rec_hargittai):
               " year      = {2009}\n"
               "}\n")
     assert convert(rec_hargittai, include='required', align=True) == bibtex
+
+def test_volume(rec_sholokhov):
+    output = convert(rec_sholokhov, include=['volume'])
+    assert ' volume = {4 v.}' in output
+    

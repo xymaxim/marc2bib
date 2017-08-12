@@ -33,6 +33,7 @@ BOOK_REQ_TAGFUNCS = {
 BOOK_OPT_TAGFUNCS = {
     'address': book_tagfuncs.get_address,
     'edition': book_tagfuncs.get_edition,
+    'volume': book_tagfuncs.get_volume,
     'isbn': Record.isbn,
 }
 
