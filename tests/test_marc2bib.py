@@ -106,3 +106,12 @@ def test_another_publication_field(rec_tsing):
 def test_subtitle(rec_tsing):
     output = convert(rec_tsing)
     assert 'The mushroom at the end of the world: on the possibility of life in capitalist ruins' in output
+
+def test_tag_values_alignment(rec_hargittai):
+    bibtex = ("@book{hargittai2009,\n"
+              " author    = {Hargittai, István},\n"
+              " publisher = {Springer},\n"
+              " title     = {Symmetry through the eyes of a chemist},\n"
+              " year      = {2009}\n"
+              "}\n")
+    assert convert(rec_hargittai, include='required', align=True) == bibtex

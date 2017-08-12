@@ -1,3 +1,4 @@
+
 """This is a main marc2bib package file.
 
 Make sure to check out the FAQ [1] for the MARC 21 at the Library of
@@ -80,10 +81,15 @@ BOOK_OPT_TAGFUNCS = {
     'isbn': Record.isbn,
 }
 
-def _as_bibtex(bibtype, bibkey, fields, indent):
+def _as_bibtex(bibtype, bibkey, fields, indent, align=False):
+    if align:
+        tag_width = max(map(len, fields))
+    else:
+        tag_width = 0
+        
     bibtex = '@{0}{{{1}'.format(bibtype, bibkey)
     for tag, value in sorted(fields.items()):
-        bibtex += ',\n{0}{1} = {{{2}}}'.format(' ' * indent, tag, value)
+        bibtex += ',\n{0}{1:<{width}} = {{{2}}}'.format(' ' * indent, tag, value, width=tag_width)
     bibtex += '\n}\n'
     return bibtex
 
@@ -119,7 +125,8 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
                             ``bibtype``
             * a list of tags to include together with the required
               ones. For example, ['edition'].
-        indent: The field line indentation. Defaults to 1.
+        indent (int): The field line indentation. Defaults to 1.
+        align (bool): If True, align tag values by the longest tag. Default is False.
 
     Returns:
         A BibTeX-formatted string.
@@ -180,4 +187,5 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         bibkey = surname.lower() + get_year(record)
 
     field_indent = kw.get('indent', 1)
-    return _as_bibtex(bibtype, bibkey, fields, field_indent)
+    align = kw.get('align', False)
+    return _as_bibtex(bibtype, bibkey, fields, field_indent, align=align)
