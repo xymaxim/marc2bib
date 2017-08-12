@@ -30,15 +30,16 @@ def get_address(record):
 
 def get_author(record):
     field = record['100']
-    if field is None:
-        return ''
-    else:
+    if field:
         return field['a'].rstrip('.')
+    else:
+        return ''
+        
 
 def get_edition(record):
-    field = record.get_fields('250')
+    field = record['250']
     if field:
-        return field[0]['a']
+        return field['a']
     else:
         return ''
 
@@ -76,6 +77,7 @@ BOOK_REQ_TAGFUNCS = {
 BOOK_ADD_TAGFUNCS = {
     'address': get_address,
     'edition': get_edition,
+    'isbn': Record.isbn,
 }
 
 
@@ -176,7 +178,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         except KeyError:
             authors_or_editors = fields['editor']
         surname = authors_or_editors.split(',')[0]
-        bibkey = surname + get_year(record)
+        bibkey = surname.lower() + get_year(record)
 
     field_indent = kw.get('indent', 1)
     return _as_bibtex(bibtype, bibkey, fields, field_indent)
