@@ -50,7 +50,7 @@ def test_new_bibkey(rec_hargittai):
     assert 'hargittai2009-sym' in output
 
 def test_not_str_tagfunc_return(rec_hargittai):
-    def yay_func(_): return None
+    def yay_func(_): return 6.626
 
     with pytest.raises(TypeError) as excinfo:
         convert(rec_hargittai, tagfuncs={'yay': yay_func})
@@ -99,7 +99,7 @@ def test_include_with_non_existent_tag(rec_hargittai):
         convert(rec_hargittai, include=['non-existent'])
 
 def test_another_publication_field(rec_tsing):
-    bibtex = convert(rec_tsing)
+    bibtex = convert(rec_tsing, include=['address'])
     assert ' address = {Princeton}' in bibtex
     assert ' publisher = {Princeton University Press}' in bibtex
 
