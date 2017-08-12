@@ -124,11 +124,11 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     Returns:
         A BibTeX-formatted string.
     """
-    tagfuncs_ = BOOK_REQ_TAGFUNCS.copy()
+    ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
 
     include_arg = kw.get('include', 'all')
     if include_arg == 'all':
-        tagfuncs_.update(BOOK_OPT_TAGFUNCS)
+        ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
     elif include_arg != 'required':
         # Check if include argument is iterable and not a string.
         # We are no longer interested in a string because all
@@ -144,19 +144,19 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             raise
         else:
             req_tags = list(BOOK_REQ_TAGFUNCS.keys())
-            add_tags = list(BOOK_OPT_TAGFUNCS.keys())
-            if not set(include_arg).issubset(req_tags + add_tags):
+            opt_tags = list(BOOK_OPT_TAGFUNCS.keys())
+            if not set(include_arg).issubset(req_tags + opt_tags):
                 raise ValueError("include contains unknown tag(s)")
 
             tagsfuncs_to_include = {tag: BOOK_OPT_TAGFUNCS[tag]
                                     for tag in include_arg}
-            tagfuncs_.update(tagsfuncs_to_include)
+            ctx_tagfuncs.update(tagsfuncs_to_include)
 
     if tagfuncs:
-        tagfuncs_.update(tagfuncs)
+        ctx_tagfuncs.update(tagfuncs)
 
     fields = {}
-    for tag, func in tagfuncs_.items():
+    for tag, func in ctx_tagfuncs.items():
         field_value = func(record)
         if not isinstance(field_value, str):
             msg = ("Returned value from {} for {} tag "
@@ -167,7 +167,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     if fields['author'] == '':
         fields.pop('author')
         try:
-            fields['editor'] = tagfuncs_['editor'](record)
+            fields['editor'] = ctx_tagfuncs['editor'](record)
         except KeyError:
             fields['editor'] = get_editor(record)
 
