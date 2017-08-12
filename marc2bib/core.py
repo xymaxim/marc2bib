@@ -24,16 +24,16 @@ from . import tagfuncs as book_tagfuncs
 
 
 BOOK_REQ_TAGFUNCS = {
-    'author': book_tagfuncs.get_author,
-    'publisher': book_tagfuncs.get_publisher,
-    'title': book_tagfuncs.get_title,
-    'year': book_tagfuncs.get_year,
+    'author': book_tagfuncs.common_author,
+    'publisher': book_tagfuncs.common_publisher,
+    'title': book_tagfuncs.common_title,
+    'year': book_tagfuncs.common_year,
 }
 
 BOOK_OPT_TAGFUNCS = {
-    'address': book_tagfuncs.get_address,
-    'edition': book_tagfuncs.get_edition,
-    'volume': book_tagfuncs.get_volume,
+    'address': book_tagfuncs.common_address,
+    'edition': book_tagfuncs.common_edition,
+    'volume': book_tagfuncs.common_volume,
     'isbn': Record.isbn,
 }
 
@@ -136,7 +136,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         try:
             fields['editor'] = ctx_tagfuncs['editor'](record)
         except KeyError:
-            fields['editor'] = book_tagfuncs.get_editor(record)
+            fields['editor'] = book_tagfuncs.common_editor(record)
 
     if bibkey is None:
         try:
@@ -144,7 +144,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         except KeyError:
             authors_or_editors = fields['editor']
         surname = authors_or_editors.split(',')[0]
-        bibkey = surname.lower() + book_tagfuncs.get_year(record)
+        bibkey = surname.lower() + book_tagfuncs.common_year(record)
 
     indent = kw.get('indent', 1)
     align = kw.get('align', False)
