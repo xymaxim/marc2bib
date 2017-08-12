@@ -35,7 +35,6 @@ def get_author(record):
     else:
         return ''
         
-
 def get_edition(record):
     field = record['250']
     if field:
@@ -67,6 +66,7 @@ def get_title(record):
 def get_year(record):
     return record.pubyear().lstrip('c').rstrip('.')
 
+
 BOOK_REQ_TAGFUNCS = {
     'author': get_author,
     'publisher': get_publisher,
@@ -74,12 +74,11 @@ BOOK_REQ_TAGFUNCS = {
     'year': get_year,
 }
 
-BOOK_ADD_TAGFUNCS = {
+BOOK_OPT_TAGFUNCS = {
     'address': get_address,
     'edition': get_edition,
     'isbn': Record.isbn,
 }
-
 
 def _as_bibtex(bibtype, bibkey, fields, indent):
     bibtex = '@{0}{{{1}'.format(bibtype, bibkey)
@@ -92,7 +91,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     """Converts an instance of :class:`pymarc.Record` to a BibTeX entry.
 
     By default all defined fields is returned. For the book entry see
-    keys in `BOOK_REQ_TAGFUNCS` and `BOOK_ADD_TAGFUNCS`. Use ``taguncs``
+    keys in `BOOK_REQ_TAGFUNCS` and `BOOK_OPT_TAGFUNCS`. Use ``taguncs``
     argument to extend or override returned tags. If you want to control
     the returned tags, use ``include`` argument instead.
 
@@ -129,7 +128,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
 
     include_arg = kw.get('include', 'all')
     if include_arg == 'all':
-        tagfuncs_.update(BOOK_ADD_TAGFUNCS)
+        tagfuncs_.update(BOOK_OPT_TAGFUNCS)
     elif include_arg != 'required':
         # Check if include argument is iterable and not a string.
         # We are no longer interested in a string because all
@@ -145,11 +144,11 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             raise
         else:
             req_tags = list(BOOK_REQ_TAGFUNCS.keys())
-            add_tags = list(BOOK_ADD_TAGFUNCS.keys())
+            add_tags = list(BOOK_OPT_TAGFUNCS.keys())
             if not set(include_arg).issubset(req_tags + add_tags):
                 raise ValueError("include contains unknown tag(s)")
 
-            tagsfuncs_to_include = {tag: BOOK_ADD_TAGFUNCS[tag]
+            tagsfuncs_to_include = {tag: BOOK_OPT_TAGFUNCS[tag]
                                     for tag in include_arg}
             tagfuncs_.update(tagsfuncs_to_include)
 
