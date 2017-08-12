@@ -33,14 +33,14 @@ def get_author(record):
     if field:
         return field['a'].rstrip('.')
     else:
-        return ''
+        return None
         
 def get_edition(record):
     field = record['250']
     if field:
         return field['a']
     else:
-        return ''
+        return None
 
 def get_editor(record):
     eds = [ed['a'].rstrip(',') for ed in record.get_fields('700')]
@@ -98,7 +98,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     Args:
         record: An instance of :class:`pymarc.Record`.
         bibkey (Optional[str]): A BibTeX citation key. If ``None``, then
-            the author-date style is used, e.g. "Hargittai2007". If the
+            the author-date style is used, e.g. "hargittai2007". If the
             author is not provided, then the first editor will be used.
         tagfuncs (Optional[dict]): A dictionary with functions used to
             retrieve a BibTeX tag value. The key of the dictionary is
@@ -108,6 +108,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
 
             def tagfunc(record):
                 # Insert your way to get the field value here.
+                ...
 
             convert(record, tagfuncs={'tag': tagfunc})
 
@@ -126,7 +127,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     """
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
 
-    include_arg = kw.get('include', 'all')
+    include_arg = kw.get('include', 'required')
     if include_arg == 'all':
         ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
     elif include_arg != 'required':
@@ -158,9 +159,9 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     fields = {}
     for tag, func in ctx_tagfuncs.items():
         field_value = func(record)
-        if not isinstance(field_value, str):
+        if not isinstance(field_value, str) and field_value is not None:
             msg = ("Returned value from {} for {} tag "
-                   "should be a string").format(func, tag)
+                   "should be a string or None").format(func, tag)
             raise TypeError(msg)
         fields[tag] = field_value
 
