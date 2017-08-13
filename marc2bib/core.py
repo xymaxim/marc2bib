@@ -166,7 +166,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         except KeyError:
             authors_or_editors = fields['editor']
         surname = authors_or_editors.split(',')[0]
-        bibkey = surname.lower() + default_tagfuncs.common_year(record)
+        bibkey = surname.lower() + fields['year']
 
     indent = kw.get('indent', 1)
     align = kw.get('align', False)
