@@ -1,3 +1,10 @@
+"""Here are all currently defined tag-functions.
+
+- common for all entry types:
+    address, author, edition, editor, note, pages, publisher,
+    series, title, volume, year
+"""
+
 def _get_subfield(record, subfield):
     try:
         f, subf = subfield[:3], subfield[-1:]
@@ -43,8 +50,8 @@ def common_title(record):
         title = '{}: '.format(title.rsplit(' :')[0])
         rv = title + subtitle.rstrip('.')
     else:
-        rv = title.rstrip(' /')
-    return rv
+        rv = title
+    return rv.rstrip(' /')
 
 def common_year(record):
     return record.pubyear().lstrip('c').rstrip('.')
