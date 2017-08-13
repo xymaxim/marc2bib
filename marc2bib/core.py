@@ -91,6 +91,8 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         indent (int): The tag line indentation. Defaults to 1.
         align (bool): If True, align tag values by the longest tag.
             Defaults to False.
+        allow_empty (bool): If True, also include tags with an empty
+            content to the output. Defaults to False. 
 
     Returns:
         A BibTeX-formatted string.
@@ -133,14 +135,16 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             msg = ("Returned value from {} for {} tag "
                    "should be a string or None")
             raise TypeError(msg.format(func, tag))
-        
+
         if field_value is None:
             msg = ("The content of tag `{}` is None, "
                    "replacing it with an empty value")
             warnings.warn(UserWarning(msg.format(tag)))
             field_value = ''
-            
-        fields[tag] = field_value
+
+        allow_empty = kw.get('allow_empty', False)
+        if field_value.strip() or (field_value.strip() == '' and allow_empty):
+            fields[tag] = field_value
 
     if fields['author'] == '':
         fields.pop('author')
