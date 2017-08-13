@@ -86,7 +86,6 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
 
     Keyword args:
         include: Defaults to 'all'. The value can be either
-
             * 'all' -- include all defined tags for the given ``bibtype``
             * 'required' -- include only required tags for the given
                             ``bibtype``
@@ -108,7 +107,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     if include_arg == 'all':
         ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
     elif include_arg != 'required':
-        # Check if include argument is iterable and not a string.
+        # Check if `include` argument is iterable and not a string.
         # We are no longer interested in a string because all
         # possible values are already passed.
         try:
@@ -121,14 +120,13 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             # TODO Raise ValueError or something like that.
             raise
         else:
-            req_tags = list(BOOK_REQ_TAGFUNCS.keys())
-            opt_tags = list(BOOK_OPT_TAGFUNCS.keys())
-            if not set(include_arg).issubset(req_tags + opt_tags):
-                raise ValueError("include contains unknown tag(s)")
-
-            tagsfuncs_to_include = {tag: BOOK_OPT_TAGFUNCS[tag]
-                                    for tag in include_arg}
-            ctx_tagfuncs.update(tagsfuncs_to_include)
+            if not all(tag in BOOK_OPT_TAGFUNCS for tag in include_arg):
+                raise ValueError("include contains unknown optional tag(s)")
+            
+            tagfuncs_to_include = {}
+            for tag in include_arg:
+                tagfuncs_to_include[tag] = BOOK_OPT_TAGFUNCS[tag]
+            ctx_tagfuncs.update(tagfuncs_to_include)
 
     if tagfuncs:
         ctx_tagfuncs.update(tagfuncs)
