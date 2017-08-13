@@ -122,11 +122,8 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         else:
             if not all(tag in BOOK_OPT_TAGFUNCS for tag in include_arg):
                 raise ValueError("include contains unknown optional tag(s)")
-            
-            tagfuncs_to_include = {}
             for tag in include_arg:
-                tagfuncs_to_include[tag] = BOOK_OPT_TAGFUNCS[tag]
-            ctx_tagfuncs.update(tagfuncs_to_include)
+                ctx_tagfuncs[tag] = BOOK_OPT_TAGFUNCS[tag]
 
     if tagfuncs:
         ctx_tagfuncs.update(tagfuncs)
