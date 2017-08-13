@@ -120,6 +120,8 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             # TODO Raise ValueError or something like that.
             raise
         else:
+            # Ensure that all of the user-provided tags has a
+            # tag-function defined by default in optional tags.
             if not all(tag in BOOK_OPT_TAGFUNCS for tag in include_arg):
                 raise ValueError("include contains unknown optional tag(s)")
             for tag in include_arg:
