@@ -133,20 +133,20 @@ def test_tag_with_none_value(rec_sholokhov):
         output = convert(rec_sholokhov, tagfuncs=dict(note=none_func))
         assert ' none = {None}' not in output
 
-def test_disallow_empty_tags_by_default(rec_sholokhov):
+def test_disallow_blank_tags_by_default(rec_sholokhov):
     tagfuncs = {
-        'firstempty': lambda _: '',
-        'secondempty': lambda _: ' ', 
+        'firstblank': lambda _: '',
+        'secondblank': lambda _: ' ', 
     }
     output = convert(rec_sholokhov, tagfuncs=tagfuncs)
-    assert ' firstempty = {}' not in output
-    assert ' secondempty =' not in output
+    assert ' firstblank = {}' not in output
+    assert ' secondblank =' not in output
 
-def test_allow_empty_tags(rec_sholokhov):
+def test_allow_blank_tags(rec_sholokhov):
     tagfuncs = {
-        'firstempty': lambda _: '',
-        'secondempty': lambda _: ' ', 
+        'firstblank': lambda _: '',
+        'secondblank': lambda _: ' ', 
     }
-    output = convert(rec_sholokhov, tagfuncs=tagfuncs, allow_empty=True)
-    assert ' firstempty = {}' in output
-    assert ' secondempty = { }' in output
+    output = convert(rec_sholokhov, tagfuncs=tagfuncs, allow_blank=True)
+    assert ' firstblank = {}' in output
+    assert ' secondblank = { }' in output

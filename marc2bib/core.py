@@ -91,8 +91,9 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         indent (int): The tag line indentation. Defaults to 1.
         align (bool): If True, align tag values by the longest tag.
             Defaults to False.
-        allow_empty (bool): If True, also include tags with an empty
-            content to the output. Defaults to False. 
+        allow_blank (bool): If True, also include tags with a blank 
+            content (empty or contains only whitespace characters)
+            to the output. Defaults to False. 
 
     Returns:
         A BibTeX-formatted string.
@@ -142,8 +143,8 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             warnings.warn(UserWarning(msg.format(tag)))
             field_value = ''
 
-        allow_empty = kw.get('allow_empty', False)
-        if field_value.strip() or (field_value.strip() == '' and allow_empty):
+        allow_blank = kw.get('allow_blank', False)
+        if field_value.strip() or (field_value.strip() == '' and allow_blank):
             fields[tag] = field_value
 
     if fields['author'] == '':
