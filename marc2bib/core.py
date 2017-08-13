@@ -16,6 +16,7 @@ original manual dated 1988 [5].
 [5] http://ctan.uni-altai.ru/biblio/bibtex/base/btxdoc.pdf
 """
 
+import warnings
 from functools import reduce
 
 from pymarc import MARCReader, Record
@@ -130,8 +131,15 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         field_value = func(record)
         if not isinstance(field_value, str) and field_value is not None:
             msg = ("Returned value from {} for {} tag "
-                   "should be a string or None").format(func, tag)
-            raise TypeError(msg)
+                   "should be a string or None")
+            raise TypeError(msg.format(func, tag))
+        
+        if field_value is None:
+            msg = ("The content of tag `{}` is None, "
+                   "replacing it with an empty value")
+            warnings.warn(UserWarning(msg.format(tag)))
+            field_value = ''
+            
         fields[tag] = field_value
 
     if fields['author'] == '':

@@ -126,3 +126,19 @@ def test_tag_values_alignment(rec_hargittai):
 def test_volume(rec_sholokhov):
     output = convert(rec_sholokhov, include=['volume'])
     assert ' volume = {4 v.}' in output
+
+def test_tag_with_none_value(rec_sholokhov):
+    none_func = lambda _: None
+    with pytest.warns(UserWarning):
+        output = convert(rec_sholokhov, tagfuncs=dict(note=none_func))
+        assert ' none = {None}' not in output
+
+@pytest.mark.skip
+def test_tag_with_empty_value(rec_sholokhov):
+    tagfuncs = {
+        'firstempty': lambda _: '',
+        'secondempty': lambda _: ' ', 
+    }
+    output = convert(rec_sholokhov, tagfuncs=tagfuncs)
+    assert ' firstempty = {}' not in output
+    assert ' secondempty =' not in output
