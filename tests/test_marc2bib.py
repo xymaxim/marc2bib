@@ -126,4 +126,3 @@ def test_tag_values_alignment(rec_hargittai):
 def test_volume(rec_sholokhov):
     output = convert(rec_sholokhov, include=['volume'])
     assert ' volume = {4 v.}' in output
-    

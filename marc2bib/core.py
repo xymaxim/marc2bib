@@ -20,20 +20,23 @@ from functools import reduce
 
 from pymarc import MARCReader, Record
 
-from . import tagfuncs as book_tagfuncs
+from . import tagfuncs as default_tagfuncs
 
 
 BOOK_REQ_TAGFUNCS = {
-    'author': book_tagfuncs.common_author,
-    'publisher': book_tagfuncs.common_publisher,
-    'title': book_tagfuncs.common_title,
-    'year': book_tagfuncs.common_year,
+    'author': default_tagfuncs.common_author,
+    'publisher': default_tagfuncs.common_publisher,
+    'title': default_tagfuncs.common_title,
+    'year': default_tagfuncs.common_year,
 }
 
 BOOK_OPT_TAGFUNCS = {
-    'address': book_tagfuncs.common_address,
-    'edition': book_tagfuncs.common_edition,
-    'volume': book_tagfuncs.common_volume,
+    'address': default_tagfuncs.common_address,
+    'edition': default_tagfuncs.common_edition,
+    'volume': default_tagfuncs.common_volume,
+    'note': default_tagfuncs.common_note,
+    'number': default_tagfuncs.common_volume,
+    'pages': default_tagfuncs.common_pages,
     'isbn': Record.isbn,
 }
 
@@ -136,7 +139,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         try:
             fields['editor'] = ctx_tagfuncs['editor'](record)
         except KeyError:
-            fields['editor'] = book_tagfuncs.common_editor(record)
+            fields['editor'] = default_tagfuncs.common_editor(record)
 
     if bibkey is None:
         try:
@@ -144,7 +147,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         except KeyError:
             authors_or_editors = fields['editor']
         surname = authors_or_editors.split(',')[0]
-        bibkey = surname.lower() + book_tagfuncs.common_year(record)
+        bibkey = surname.lower() + default_tagfuncs.common_year(record)
 
     indent = kw.get('indent', 1)
     align = kw.get('align', False)
