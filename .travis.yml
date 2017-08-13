@@ -6,7 +6,7 @@ install:
   - pip install -q pytest
   - pip install -e .
 script:
-  - py.test tests
+  - pytest tests
 notifications:
   email:
     recipients:
