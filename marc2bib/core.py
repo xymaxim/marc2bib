@@ -17,7 +17,6 @@ original manual dated 1988 [5].
 """
 
 import warnings
-from functools import reduce
 
 from pymarc import MARCReader, Record
 
@@ -148,7 +147,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         blank_and_allowed = _isblank(field_value) and allow_blank
         if field_value.strip() or blank_and_allowed or tag in BOOK_REQ_TAGFUNCS:
             # Here we only accept non-blank field values, empty values
-            # if they are allowed by the given keyword argument, and also
+            # (if they are allowed by the given keyword argument), and also
             # all required fields.
             fields[tag] = field_value
 
