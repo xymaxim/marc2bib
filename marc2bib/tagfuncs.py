@@ -62,4 +62,10 @@ def common_pages(record):
 def common_note(record):
     raise NotImplementedError
 
+def common_series(record):
+    field = record['490']
+    if field:
+        return field['a'].rstrip(',')
+    else:
+        return None
 

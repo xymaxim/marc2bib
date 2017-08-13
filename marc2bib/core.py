@@ -38,9 +38,13 @@ BOOK_OPT_TAGFUNCS = {
     'note': default_tagfuncs.common_note,
     'number': default_tagfuncs.common_volume,
     'pages': default_tagfuncs.common_pages,
+    'series': default_tagfuncs.common_series,
     'isbn': Record.isbn,
 }
 
+
+def _isblank(string):
+    return string.strip() == ''
 
 def _as_bibtex(bibtype, bibkey, fields, indent, align=False):
     tag_width = max(map(len, fields)) if align else 0
@@ -114,7 +118,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             msg = ("include should be an iterable or one of "
                    "('required', 'all'), got {}".format(include_arg))
             e.args += (msg,)
-            # XXX ValueError or something like that, actually.
+            # TODO Raise ValueError or something like that.
             raise
         else:
             req_tags = list(BOOK_REQ_TAGFUNCS.keys())
@@ -144,14 +148,16 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             field_value = ''
 
         allow_blank = kw.get('allow_blank', False)
-        if field_value.strip() or (field_value.strip() == '' and allow_blank):
+        blank_and_allowed = _isblank(field_value) and allow_blank
+        if field_value.strip() or blank_and_allowed or tag in BOOK_REQ_TAGFUNCS:
+            # Here we only accept non-blank field values, empty values
+            # if they are allowed by the given keyword argument, and also
+            # all required fields.
             fields[tag] = field_value
 
-    if fields['author'] == '':
+    if _isblank(fields['author']):
         fields.pop('author')
-        try:
-            fields['editor'] = ctx_tagfuncs['editor'](record)
-        except KeyError:
+        if 'editor' not in fields:
             fields['editor'] = default_tagfuncs.common_editor(record)
 
     if bibkey is None:

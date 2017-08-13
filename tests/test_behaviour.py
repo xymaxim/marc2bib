@@ -77,3 +77,13 @@ def test_allow_blank_tags(rec_sholokhov):
     output = convert(rec_sholokhov, tagfuncs=tagfuncs, allow_blank=True)
     assert ' firstblank = {}' in output
     assert ' secondblank = { }' in output
+    
+def test_author_or_editor(rec_clusters):
+    output = convert(rec_clusters)
+    assert ' author = ' not in output
+    assert ' editor = {Jellinek, J.}' in output
+
+def test_author_or_editor_with_blank(rec_clusters):
+    output = convert(rec_clusters, allow_blank=True)
+    assert ' author = ' not in output
+    assert ' editor = {Jellinek, J.}' in output

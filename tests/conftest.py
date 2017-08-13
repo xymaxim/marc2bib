@@ -25,3 +25,11 @@ def rec_sholokhov(request):
     reader = MARCReader(open('tests/sholokhov.mrc', 'rb'))
     request.addfinalizer(reader.close)
     return next(reader)
+
+@pytest.fixture(scope='function')
+def rec_clusters(request):
+    # This MARC file has been downloaded from
+    # https://lccn.loc.gov/990155550
+    reader = MARCReader(open('tests/clusters.mrc', 'rb'))
+    request.addfinalizer(reader.close)
+    return next(reader)

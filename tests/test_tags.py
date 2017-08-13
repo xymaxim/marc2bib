@@ -45,3 +45,7 @@ def test_subtitle(rec_tsing):
 def test_volume(rec_sholokhov):
     output = convert(rec_sholokhov, include=['volume'])
     assert ' volume = {4 v.}' in output
+
+def test_series(rec_clusters):
+    output = convert(rec_clusters, include=['series'])
+    assert ' series = {Cluster physics}' in output
