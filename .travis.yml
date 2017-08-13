@@ -5,7 +5,7 @@ python:
   - "nightly"
 install:
   - pip install --upgrade pip
-  - pip install -q pytest>=3.2.0
+  - pip install pytest>=3.2.0
   - pip install -e .
 script:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.4 ]]; then py.test; else pytest; fi
