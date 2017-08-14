@@ -20,25 +20,35 @@ import warnings
 
 from pymarc import MARCReader, Record
 
-from . import tagfuncs as default_tagfuncs
+from .tagfuncs import *
 
 
 BOOK_REQ_TAGFUNCS = {
-    'author': default_tagfuncs.common_author,
-    'publisher': default_tagfuncs.common_publisher,
-    'title': default_tagfuncs.common_title,
-    'year': default_tagfuncs.common_year,
+    'author': common_author,
+    'publisher': common_publisher,
+    'title': common_title,
+    'year': common_year,
+}
+BOOK_OPT_TAGFUNCS = {
+    'address': common_address,
+    'edition': common_edition,
+    'volume': common_volume,
+    'note': common_note,
+    'number': common_volume,
+    'pages': common_pages,
+    'series': common_series,
+    'isbn': Record.isbn,
 }
 
-BOOK_OPT_TAGFUNCS = {
-    'address': default_tagfuncs.common_address,
-    'edition': default_tagfuncs.common_edition,
-    'volume': default_tagfuncs.common_volume,
-    'note': default_tagfuncs.common_note,
-    'number': default_tagfuncs.common_volume,
-    'pages': default_tagfuncs.common_pages,
-    'series': default_tagfuncs.common_series,
-    'isbn': Record.isbn,
+TECHREPORT_REQ_TAGFUNCS = {
+    'author': common_author,
+    'title': common_title,
+    'institution': techreport_institution,
+    'year': common_year,
+}
+TECHREPORT_OPT_TAGFUNCS = {
+    'address': common_address,
+    'note': common_note,
 }
 
 
@@ -100,11 +110,18 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     Returns:
         A BibTeX-formatted string.
     """
-    ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
+    if bibtype.lower() == 'book':
+        req_tagfuncs = BOOK_REQ_TAGFUNCS
+        opt_tagfuncs = BOOK_OPT_TAGFUNCS
+    elif bibtype.lower() == 'techreport':
+        req_tagfuncs = TECHREPORT_REQ_TAGFUNCS
+        opt_tagfuncs = TECHREPORT_OPT_TAGFUNCS
 
+    ctx_tagfuncs = req_tagfuncs.copy()
+        
     include_arg = kw.get('include', 'required')
     if include_arg == 'all':
-        ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
+        ctx_tagfuncs.update(opt_tagfuncs)
     elif include_arg != 'required':
         # Check if `include` argument is iterable and not a string.
         # We are no longer interested in a string because all
@@ -121,10 +138,10 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         else:
             # Ensure that all of the user-provided tags has a
             # tag-function defined by default in optional tags.
-            if not all(tag in BOOK_OPT_TAGFUNCS for tag in include_arg):
+            if not all(tag in opt_tagfuncs for tag in include_arg):
                 raise ValueError("include contains unknown optional tag(s)")
             for tag in include_arg:
-                ctx_tagfuncs[tag] = BOOK_OPT_TAGFUNCS[tag]
+                ctx_tagfuncs[tag] = opt_tagfuncs[tag]
 
     if tagfuncs:
         ctx_tagfuncs.update(tagfuncs)
@@ -145,7 +162,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
 
         allow_blank = kw.get('allow_blank', False)
         blank_and_allowed = _isblank(field_value) and allow_blank
-        if field_value.strip() or blank_and_allowed or tag in BOOK_REQ_TAGFUNCS:
+        if field_value.strip() or blank_and_allowed or tag in req_tagfuncs:
             # Here we only accept non-blank field values, empty values
             # (if they are allowed by the given keyword argument), and also
             # all required fields.
@@ -154,7 +171,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     if _isblank(fields['author']):
         fields.pop('author')
         if 'editor' not in fields:
-            fields['editor'] = default_tagfuncs.common_editor(record)
+            fields['editor'] = common_editor(record)
 
     if bibkey is None:
         try:

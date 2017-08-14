@@ -49,3 +49,10 @@ def test_volume(rec_sholokhov):
 def test_series(rec_clusters):
     output = convert(rec_clusters, include=['series'])
     assert ' series = {Cluster physics}' in output
+
+def test_institution(rec_techreport):
+    output = convert(rec_techreport, bibtype='techreport')
+    value = ("institution = {Library of Congress. Network Development "
+             "and MARC Standards Office. National Library of Canada. "
+             "Standards and Support.}")
+    assert value in output

@@ -33,3 +33,11 @@ def rec_clusters(request):
     reader = MARCReader(open('tests/clusters.mrc', 'rb'))
     request.addfinalizer(reader.close)
     return next(reader)
+
+@pytest.fixture(scope='function')
+def rec_techreport(request):
+    # This MARC file has been downloaded from
+    # https://lccn.loc.gov/990155550
+    reader = MARCReader(open('tests/techreport.mrc', 'rb'))
+    request.addfinalizer(reader.close)
+    return next(reader)

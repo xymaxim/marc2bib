@@ -3,6 +3,9 @@
 - common for all entry types:
     address, author, edition, editor, note, pages, publisher,
     series, title, volume, year
+
+- techreport:
+    institution
 """
 
 def _get_subfield(record, subfield):
@@ -76,3 +79,11 @@ def common_series(record):
     else:
         return None
 
+    
+def techreport_institution(record):
+    fields = record.get_fields('710')
+    parts = []
+    for f in fields:
+        parts.append('{} {}'.format(f['a'], f['b']))
+    return ' '.join(parts)
+    
