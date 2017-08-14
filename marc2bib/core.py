@@ -20,8 +20,15 @@ import warnings
 
 from pymarc import MARCReader, Record
 
-from .tagfuncs import *
+from .tagfuncs import req_tagfuncs, opt_tagfuncs
 
+
+book_tags = [
+    'author', 'publisher', 'title', 'year', 'address', 'edition',
+    'volume', 'note', 'number', 'pages', 'series', 'isbn']
+
+book_tagfuncs['isbn'] = Record.isbn
+book_tagfuncs['number'] = common_volume
 
 BOOK_REQ_TAGFUNCS = {
     'author': common_author,

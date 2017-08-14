@@ -8,6 +8,26 @@
     institution
 """
 
+default_req_tagfuncs = {}
+default_opt_tagfuncs = {}
+
+def req_tagfunc(bibtype, tag):
+    def layer(func):
+        def wrapper(*args):
+            default_req_tagfuncs[bibtype] = tag
+            func(*args)
+        return wrapper
+    return layer
+
+def opt_tagfunc(bibtype, tag):
+    def layer(func):
+        def wrapper(*args):
+            default_opt_tagfuncs[bibtype] = tag
+            func(*args)
+        return wrapper
+    return layer
+
+
 def _get_subfield(record, subfield):
     try:
         f, subf = subfield[:3], subfield[-1:]
@@ -16,11 +36,13 @@ def _get_subfield(record, subfield):
         rv = None
     return rv
 
+@req_tagfunc('common', 'address')
 def common_address(record):
     field = record.get_fields('260', '264')[0]
     address = field['a']
     return address.replace('[', '').replace(']', '').rstrip(' : ')
 
+@req_tagfunc('common', 'author')
 def common_author(record):
     field = record['100']
     if field:
@@ -28,6 +50,7 @@ def common_author(record):
     else:
         return None
 
+@req_tagfunc('common', 'edition')
 def common_edition(record):
     field = record['250']
     if field:
@@ -35,13 +58,16 @@ def common_edition(record):
     else:
         return None
 
+@opt_tagfunc('common', 'editor')
 def common_editor(record):
     eds = [ed['a'].rstrip(',') for ed in record.get_fields('700')]
     return ' and '.join(eds)
 
+@req_tagfunc('common', 'publisher')
 def common_publisher(record):
     return record.publisher().rstrip(',').rstrip(' ;')
 
+@req_tagfunc('common', 'title')
 def common_title(record):
     title = record['245']['a']
     subtitle = record['245']['b']
@@ -56,9 +82,11 @@ def common_title(record):
         rv = title
     return rv.rstrip(' /')
 
+@req_tagfunc('common', 'year')
 def common_year(record):
     return record.pubyear().lstrip('c').rstrip('.')
 
+@opt_tagfunc('common', 'volume')
 def common_volume(record):
     field = record['300']
     if field:
@@ -66,12 +94,15 @@ def common_volume(record):
     else:
         return None
 
+@opt_tagfunc('common', 'pages')
 def common_pages(record):
     raise NotImplementedError
 
+@opt_tagfunc('common', 'note')
 def common_note(record):
     raise NotImplementedError
 
+@opt_tagfunc('common', 'series')
 def common_series(record):
     field = record['490']
     if field:
@@ -80,6 +111,7 @@ def common_series(record):
         return None
 
     
+@req_tagfunc('techreport', 'institution')
 def techreport_institution(record):
     fields = record.get_fields('710')
     parts = []
