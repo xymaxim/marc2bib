@@ -48,10 +48,9 @@ def _isblank(string):
 def _as_bibtex(bibtype, bibkey, fields, indent, align=False):
     tag_width = max(map(len, fields)) if align else 0
         
-    bibtex = '@{0}{{{1}'.format(bibtype, bibkey)
+    bibtex = f'@{bibtype}{{{bibkey}'
     for tag, value in sorted(fields.items()):
-        bibtex += ',\n{0}{1:<{width}} = {{{2}}}'.format(
-            ' ' * indent, tag, value, width=tag_width)
+        bibtex += f',\n{" " * indent}{tag:<{tag_width}} = {{{value}}}'
     bibtex += '\n}\n'
     
     return bibtex
@@ -114,7 +113,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             iter(include_arg)
         except (AssertionError, TypeError) as e:
             msg = ("include should be an iterable or one of "
-                   "('required', 'all'), got {}".format(include_arg))
+                   f"('required', 'all'), got {include_arg}")
             e.args += (msg,)
             # TODO Raise ValueError or something like that.
             raise
@@ -133,14 +132,14 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     for tag, func in ctx_tagfuncs.items():
         field_value = func(record)
         if not isinstance(field_value, str) and field_value is not None:
-            msg = ("Returned value from {} for {} tag "
+            msg = (f"Returned value from {func} for {tag} tag "
                    "should be a string or None")
-            raise TypeError(msg.format(func, tag))
+            raise TypeError(msg)
 
         if field_value is None:
-            msg = ("The content of tag `{}` is None, "
+            msg = (f"The content of tag `{tag}` is None, "
                    "replacing it with an empty value")
-            warnings.warn(UserWarning(msg.format(tag)))
+            warnings.warn(UserWarning(msg))
             field_value = ''
 
         allow_blank = kw.get('allow_blank', False)
