@@ -55,8 +55,8 @@ Tag-functions and customized return
 -----------------------------------
 
 To parse a value of BibTeX tags (fields), we use so-called
-tag-functions. Currently `marc2bib` fully supports book BibTeX
-entries---the tag-functions are defined for the corresponding required
+tag-functions. Currently ``marc2bib`` fully supports book BibTeX
+entries--the tag-functions are defined for the related required
 and optional tags. The user can extend or override them easily:
 
 .. code:: python
@@ -68,7 +68,7 @@ and optional tags. The user can extend or override them easily:
 	      
 	  convert(record, tagfuncs={'title': title_title}) 
 
-The returned tags can be either all (required and optional---default),
+The returned tags can be either all (required and optional--default),
 only required, or required with user-defined ones:
 
 .. code:: python
