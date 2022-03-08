@@ -7,10 +7,8 @@ marc2bib :book:
 	:target: https://app.travis-ci.com/github/xymaxim/marc2bib
 
 marc2bib is a Python package that allows to convert bibliographic
-records from MARC format to BibTeX entries. Requires Python 3.
-
-It uses `pymarc <https://github.com/edsu/pymarc>`_ to read MARC data
-files.
+records from MARC format to BibTeX entries. It uses `pymarc
+<https://gitlab.com/pymarc/pymarc>`_ to read MARC data files.
 
 Installation
 ------------
@@ -33,8 +31,8 @@ Quickstart
 
 If you have not used ``pymarc`` before, nothing to worry about.
 
-Now we are going to read some data from a MARC file and easily convert
-it to a BibTeX entry:
+Let's read some data from a MARC file and convert it to a BibTeX
+entry:
 
 .. code:: python
 
@@ -43,8 +41,8 @@ it to a BibTeX entry:
 
           >>> with open('file.mrc', 'rb') as f:
           ...     reader = MARCReader(f)
-          ...     record = next(reader)  # Read the first record
-          ...     print(convert(record)) # and, ta-da, convert it to a BibTeX entry.
+          ...     record = next(reader)  # read the first record
+          ...     print(convert(record)) # convert it to a BibTeX entry
           ...
           @book{author2022,
            author = {Author, Name},
@@ -53,11 +51,37 @@ it to a BibTeX entry:
 
 And that is it!
 
+Tag-functions and customized return
+-----------------------------------
+
+To parse a value of BibTeX tags (fields), we use so-called
+tag-functions. Currently `marc2bib` fully supports book BibTeX
+entries---the tag-functions are defined for the corresponding required
+and optional tags. The user can extend or override them easily:
+
+.. code:: python
+
+	  from marc2bib import BOOK_REQ_TAGFUNCS
+
+	  def title_title(record):
+	      return BOOKS_REQ_TAGFUNCS['title'](record).title()
+	      
+	  convert(record, tagfuncs={'title': title_title}) 
+
+The returned tags can be either all (required and optional---default),
+only required, or required with user-defined ones:
+
+.. code:: python
+
+	  # Return required tags and 'pages'
+	  convert(record, include=['pages']) # or 'all', 'required' 
+
 Testing
-~~~~~~~~~~~~~~~~~
+-------
 
 For testing the package we use `pytest
-<http://pytest.org/latest/>`_. In order to run all tests, check out this repository and type:
+<http://pytest.org/latest/>`_. In order to run all tests, check out
+this repository and type:
 
 .. code::
 
