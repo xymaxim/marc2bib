@@ -18,7 +18,7 @@ original manual dated 1988 [5].
 
 import warnings
 
-from pymarc import MARCReader, Record
+from pymarc import Record
 
 from . import tagfuncs as default_tagfuncs
 

@@ -1,14 +1,5 @@
 """Here are all currently defined tag-functions."""
 
-def _get_subfield(record, subfield):
-    try:
-        f, subf = subfield[:3], subfield[-1:]
-        rv = record[f][subf]
-    except TypeError: 
-        rv = None
-    return rv
-
-
 def get_address(record):
     field = record.get_fields('260', '264')[0]
     address = field['a']
