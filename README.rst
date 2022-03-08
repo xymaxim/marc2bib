@@ -7,8 +7,7 @@ marc2bib :book:
 	:target: https://app.travis-ci.com/github/xymaxim/marc2bib
 
 marc2bib is a Python package that allows to convert bibliographic
-records from MARC format to BibTeX entries. It uses `pymarc
-<https://gitlab.com/pymarc/pymarc>`_ to read MARC data files.
+records from MARC format to BibTeX entries.
 
 Installation
 ------------
@@ -56,7 +55,7 @@ Tag-functions and customized return
 
 To parse a value of BibTeX tags (fields), we use so-called
 tag-functions. Currently ``marc2bib`` fully supports book BibTeX
-entries--the tag-functions are defined for the related required
+entries—the tag-functions are defined for the related required
 and optional tags. The user can extend or override them easily:
 
 .. code:: python
@@ -68,7 +67,7 @@ and optional tags. The user can extend or override them easily:
 	      
 	  convert(record, tagfuncs={'title': title_title}) 
 
-The returned tags can be either all (required and optional--default),
+The returned tags can be either all (required and optional—default),
 only required, or required with user-defined ones:
 
 .. code:: python
