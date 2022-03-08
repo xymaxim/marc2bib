@@ -23,8 +23,16 @@ from pymarc import MARCReader, Record
 from . import tagfuncs as default_tagfuncs
 
 
+class Marc2BibError(Exception):
+    pass
+
+
+# By default, book entry may contain either one of author or editor
+# fields. See convert function to know how they are treated,
+# especially in case if both fields are requested.
 BOOK_REQ_TAGFUNCS = {
     'author': default_tagfuncs.get_author,
+    'editor': default_tagfuncs.get_editor,
     'publisher': default_tagfuncs.get_publisher,
     'title': default_tagfuncs.get_title,
     'year': default_tagfuncs.get_year,
@@ -115,8 +123,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
             msg = ("include should be an iterable or one of "
                    f"('required', 'all'), got {include_arg}")
             e.args += (msg,)
-            # TODO Raise ValueError or something like that.
-            raise
+            raise ValueError(e)
         else:
             # Ensure that all of the user-provided tags has a
             # tag-function defined by default in optional tags.
@@ -129,6 +136,21 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         ctx_tagfuncs.update(tagfuncs)
 
     fields = {}
+
+    # Check for author field first, then editor.
+    author = ctx_tagfuncs['author'](record)
+    if author:
+        # Editor field can be requested along with author.
+        if 'editor' not in include_arg or 'editor' not in tagfuncs:
+            ctx_tagfuncs.pop('editor')
+    else:
+        editor = ctx_tagfuncs['editor'](record)
+        if editor is None:
+            msg = "both author and editor (required) fields are treated empty."
+            raise Marc2BibError(msg)
+        else:
+            ctx_tagfuncs.pop('author')
+        
     for tag, func in ctx_tagfuncs.items():
         field_value = func(record)
         if not isinstance(field_value, str) and field_value is not None:
@@ -144,16 +166,12 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
 
         allow_blank = kw.get('allow_blank', False)
         blank_and_allowed = _isblank(field_value) and allow_blank
-        if field_value.strip() or blank_and_allowed or tag in BOOK_REQ_TAGFUNCS:
+        print(tag, field_value)
+        if field_value.strip() or blank_and_allowed:
             # Here we only accept non-blank field values, empty values
             # (if they are allowed by the given keyword argument), and also
             # all required fields.
             fields[tag] = field_value
-
-    if _isblank(fields['author']):
-        fields.pop('author')
-        if 'editor' not in fields:
-            fields['editor'] = default_tagfuncs.get_editor(record)
 
     if bibkey is None:
         try:
