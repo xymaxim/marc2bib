@@ -66,9 +66,8 @@ def _as_bibtex(bibtype, bibkey, fields, indent, align=False):
 def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     """Converts an instance of :class:`pymarc.Record` to a BibTeX entry.
 
-    By default all defined fields (tags) for the given `bibtype` are
-    returned. For the book entry see keys in `BOOK_REQ_TAGFUNCS` and
-    `BOOK_OPT_TAGFUNCS`. Use ``tagfuncs`` argument to extend or
+    By default all defined (required and optional) fields (tags) for
+    book entry are returned. Use ``tagfuncs`` argument to extend or
     override returned tags. If you want to control the returned tags,
     use ``include`` argument instead.
 
@@ -77,7 +76,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         bibtype (Optional[str]): A BibTeX entry type. Currently only
             book entries are fully supported.
         bibkey (Optional[str]): A BibTeX citation key. If ``None``, then
-            the author-date style is used, e.g. "hargittai2007". If the
+            the author-date style is used, e.g. "author2022". If the
             author is not provided, then the first editor will be used.
         tagfuncs (Optional[dict]): A dictionary with functions used to
             retrieve a BibTeX tag content. The key of the dictionary
@@ -106,6 +105,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
 
     Returns:
         A BibTeX-formatted string.
+
     """
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
 
