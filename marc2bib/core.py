@@ -23,10 +23,6 @@ from pymarc import MARCReader, Record
 from . import tagfuncs as default_tagfuncs
 
 
-class Marc2BibError(Exception):
-    pass
-
-
 # By default, book entry may contain either one of author or editor
 # fields. See convert function to know how they are treated,
 # especially in case if both fields are requested.
@@ -48,6 +44,10 @@ BOOK_OPT_TAGFUNCS = {
     'series': default_tagfuncs.get_series,
     'isbn': Record.isbn,
 }
+
+
+class Marc2bibError(Exception):
+    pass
 
 
 def _isblank(string):
@@ -147,7 +147,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         editor = ctx_tagfuncs['editor'](record)
         if editor is None:
             msg = "both author and editor (required) fields are treated empty."
-            raise Marc2BibError(msg)
+            raise Marc2bibError(msg)
         else:
             ctx_tagfuncs.pop('author')
         
