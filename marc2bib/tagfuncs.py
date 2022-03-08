@@ -1,9 +1,4 @@
-"""Here are all currently defined tag-functions.
-
-- common for all entry types:
-    address, author, edition, editor, note, pages, publisher,
-    series, title, volume, year
-"""
+"""Here are all currently defined tag-functions."""
 
 def _get_subfield(record, subfield):
     try:
@@ -13,33 +8,34 @@ def _get_subfield(record, subfield):
         rv = None
     return rv
 
-def common_address(record):
+
+def get_address(record):
     field = record.get_fields('260', '264')[0]
     address = field['a']
     return address.replace('[', '').replace(']', '').rstrip(' : ')
 
-def common_author(record):
+def get_author(record):
     field = record['100']
     if field:
         return field['a'].rstrip('.')
     else:
         return None
 
-def common_edition(record):
+def get_edition(record):
     field = record['250']
     if field:
         return field['a']
     else:
         return None
 
-def common_editor(record):
+def get_editor(record):
     eds = [ed['a'].rstrip(',') for ed in record.get_fields('700')]
     return ' and '.join(eds)
 
-def common_publisher(record):
+def get_publisher(record):
     return record.publisher().rstrip(',').rstrip(' ;')
 
-def common_title(record):
+def get_title(record):
     title = record['245']['a']
     subtitle = record['245']['b']
     if subtitle:
@@ -53,23 +49,23 @@ def common_title(record):
         rv = title
     return rv.rstrip(' /')
 
-def common_year(record):
+def get_year(record):
     return record.pubyear().lstrip('c').rstrip('.')
 
-def common_volume(record):
+def get_volume(record):
     field = record['300']
     if field:
         return field['a']
     else:
         return None
 
-def common_pages(record):
+def get_pages(record):
     raise NotImplementedError
 
-def common_note(record):
+def get_note(record):
     raise NotImplementedError
 
-def common_series(record):
+def get_series(record):
     field = record['490']
     if field:
         return field['a'].rstrip(',')

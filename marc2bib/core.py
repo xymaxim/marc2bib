@@ -24,20 +24,20 @@ from . import tagfuncs as default_tagfuncs
 
 
 BOOK_REQ_TAGFUNCS = {
-    'author': default_tagfuncs.common_author,
-    'publisher': default_tagfuncs.common_publisher,
-    'title': default_tagfuncs.common_title,
-    'year': default_tagfuncs.common_year,
+    'author': default_tagfuncs.get_author,
+    'publisher': default_tagfuncs.get_publisher,
+    'title': default_tagfuncs.get_title,
+    'year': default_tagfuncs.get_year,
 }
 
 BOOK_OPT_TAGFUNCS = {
-    'address': default_tagfuncs.common_address,
-    'edition': default_tagfuncs.common_edition,
-    'volume': default_tagfuncs.common_volume,
-    'note': default_tagfuncs.common_note,
-    'number': default_tagfuncs.common_volume,
-    'pages': default_tagfuncs.common_pages,
-    'series': default_tagfuncs.common_series,
+    'address': default_tagfuncs.get_address,
+    'edition': default_tagfuncs.get_edition,
+    'volume': default_tagfuncs.get_volume,
+    'note': default_tagfuncs.get_note,
+    'number': default_tagfuncs.get_volume,
+    'pages': default_tagfuncs.get_pages,
+    'series': default_tagfuncs.get_series,
     'isbn': Record.isbn,
 }
 
@@ -154,7 +154,7 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     if _isblank(fields['author']):
         fields.pop('author')
         if 'editor' not in fields:
-            fields['editor'] = default_tagfuncs.common_editor(record)
+            fields['editor'] = default_tagfuncs.get_editor(record)
 
     if bibkey is None:
         try:
