@@ -3,8 +3,8 @@ marc2bib :book:
 
 .. image:: https://img.shields.io/pypi/v/marc2bib.svg
 	:target: https://pypi.python.org/pypi/marc2bib
-.. image:: https://travis-ci.org/xymaxim/marc2bib.svg?branch=master
-	:target: https://travis-ci.org/xymaxim/marc2bib
+.. image:: https://travis-ci.com/xymaxim/marc2bib.svg?branch=master
+	:target: https://travis-ci.com/xymaxim/marc2bib
 
 marc2bib is a Python package that allows to convert bibliographic
 records from MARC format to BibTeX entries. Requires Python 3.
