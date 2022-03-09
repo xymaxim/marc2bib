@@ -57,7 +57,7 @@ def _as_bibtex(bibtype, bibkey, tags, indent, align):
     tag_width = max(map(len, tags)) if align else 0
         
     bibtex = f'@{bibtype}{{{bibkey}'
-    for tag, value in sorted(tagss.items()):
+    for tag, value in sorted(tags.items()):
         bibtex += f',\n{" " * indent}{tag:<{tag_width}} = {{{value}}}'
     bibtex += '\n}\n'
     
