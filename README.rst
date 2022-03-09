@@ -27,9 +27,9 @@ Quickstart
 ----------
 
 The package works along with `pymarc
-<https://gitlab.com/pymarc/pymarc>`_ utilized to read MARC
-files. If you have not used it before, nothing to worry about. Let's
-read some data from a MARC file and convert it to a BibTeX entry:
+<https://gitlab.com/pymarc/pymarc>`_ utilized to read MARC files. If
+you have not used it before, nothing to worry about. Let's read some
+data from a MARC file and convert it to a BibTeX entry:
 
 .. code:: python
 
@@ -48,8 +48,11 @@ read some data from a MARC file and convert it to a BibTeX entry:
 
 And that is it!
 
-Tag-functions and customized return
------------------------------------
+More examples
+-------------
+
+Tag-functions
+*************
 
 To parse a value of BibTeX tags (fields), we use so-called
 tag-functions. Currently ``marc2bib`` fully supports book BibTeX
@@ -65,14 +68,32 @@ and optional tags. The user can extend or override them easily:
 	      
 	  convert(record, tagfuncs={'title': title_title}) 
 
-The returned tags can be either all (required and optional—default),
-only required, or required with user-defined ones:
+Customizing return
+******************
+
+The returned tags can be either all (required and optional),
+only required (default), or required with user-defined ones:
 
 .. code:: python
 
 	  # Return required tags and 'pages'
 	  convert(record, include=['pages']) # or 'all', 'required' 
 
+Convert to BibTeX or just map tags
+**********************************
+
+Instead of converting MARC data to BibTeX string, you can convert it
+to a dictionary of BibTeX tags (fields) for inspection or
+post-processing:
+
+.. code:: python
+
+	  >>> from marc2bib import map_tags
+
+	  >>> tags = map_tags(record, include='all')
+	  >>> print(tags['author'])
+	  Author, Name
+	  	  
 Testing
 -------
 

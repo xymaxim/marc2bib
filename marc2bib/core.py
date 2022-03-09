@@ -63,6 +63,75 @@ def _as_bibtex(bibtype, bibkey, fields, indent, align=False):
     
     return bibtex
 
+
+def map_tags(record, tagfuncs=None, **kw):
+    ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
+    include_arg = kw.get('include', 'required')
+
+    if include_arg == 'all':
+        ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
+    elif include_arg != 'required':
+        # Check if `include_arg` argument is iterable and not a string.
+        # We are no longer interested in a string because all
+        # possible values are already passed.
+        try:
+            assert not isinstance(include_arg, str)
+            iter(include_arg)
+        except (AssertionError, TypeError) as e:
+            msg = ("include_arg should be an iterable or one of "
+                   f"('required', 'all'), got {include_arg}")
+            e.args += (msg,)
+            raise ValueError(e)
+        else:
+            # Ensure that all of the user-provided tags has a
+            # tag-function defined by default in optional tags.
+            if not all(tag in BOOK_OPT_TAGFUNCS for tag in include_arg):
+                raise ValueError("include_arg contains unknown optional tag(s)")
+            for tag in include_arg:
+                ctx_tagfuncs[tag] = BOOK_OPT_TAGFUNCS[tag]
+
+    if tagfuncs:
+        ctx_tagfuncs.update(tagfuncs)
+
+    tags = {}
+
+    # Check for author field first, then editor.
+    author = ctx_tagfuncs['author'](record)
+    if author:
+        # Editor field can be requested along with author.
+        if 'editor' not in include_arg or 'editor' not in tagfuncs:
+            ctx_tagfuncs.pop('editor')
+    else:
+        editor = ctx_tagfuncs['editor'](record)
+        if editor is None:
+            msg = "both author and editor (required) tags are treated empty."
+            raise Marc2bibError(msg)
+        else:
+            ctx_tagfuncs.pop('author')
+        
+    for tag, func in ctx_tagfuncs.items():
+        tag_value = func(record)
+        if not isinstance(tag_value, str) and tag_value is not None:
+            msg = (f"Returned value from {func} for {tag} tag "
+                   "should be a string or None")
+            raise TypeError(msg)
+
+        if tag_value is None:
+            msg = (f"The content of tag `{tag}` is None, "
+                   "replacing it with an empty value")
+            warnings.warn(UserWarning(msg))
+            tag_value = ''
+
+        allow_blank = kw.get('allow_blank', False)
+        blank_and_allowed = _isblank(tag_value) and allow_blank
+        if tag_value.strip() or blank_and_allowed:
+            # Here we only accept non-blank field values, empty values
+            # (if they are allowed by the given keyword argument), and also
+            # all required tags.
+            tags[tag] = tag_value
+
+    return tags
+
 def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     """Converts an instance of :class:`pymarc.Record` to a BibTeX entry.
 
@@ -107,81 +176,18 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         A BibTeX-formatted string.
 
     """
-    ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
-
-    include_arg = kw.get('include', 'required')
-    if include_arg == 'all':
-        ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
-    elif include_arg != 'required':
-        # Check if `include` argument is iterable and not a string.
-        # We are no longer interested in a string because all
-        # possible values are already passed.
-        try:
-            assert not isinstance(include_arg, str)
-            iter(include_arg)
-        except (AssertionError, TypeError) as e:
-            msg = ("include should be an iterable or one of "
-                   f"('required', 'all'), got {include_arg}")
-            e.args += (msg,)
-            raise ValueError(e)
-        else:
-            # Ensure that all of the user-provided tags has a
-            # tag-function defined by default in optional tags.
-            if not all(tag in BOOK_OPT_TAGFUNCS for tag in include_arg):
-                raise ValueError("include contains unknown optional tag(s)")
-            for tag in include_arg:
-                ctx_tagfuncs[tag] = BOOK_OPT_TAGFUNCS[tag]
-
-    if tagfuncs:
-        ctx_tagfuncs.update(tagfuncs)
-
-    fields = {}
-
-    # Check for author field first, then editor.
-    author = ctx_tagfuncs['author'](record)
-    if author:
-        # Editor field can be requested along with author.
-        if 'editor' not in include_arg or 'editor' not in tagfuncs:
-            ctx_tagfuncs.pop('editor')
-    else:
-        editor = ctx_tagfuncs['editor'](record)
-        if editor is None:
-            msg = "both author and editor (required) fields are treated empty."
-            raise Marc2bibError(msg)
-        else:
-            ctx_tagfuncs.pop('author')
-        
-    for tag, func in ctx_tagfuncs.items():
-        field_value = func(record)
-        if not isinstance(field_value, str) and field_value is not None:
-            msg = (f"Returned value from {func} for {tag} tag "
-                   "should be a string or None")
-            raise TypeError(msg)
-
-        if field_value is None:
-            msg = (f"The content of tag `{tag}` is None, "
-                   "replacing it with an empty value")
-            warnings.warn(UserWarning(msg))
-            field_value = ''
-
-        allow_blank = kw.get('allow_blank', False)
-        blank_and_allowed = _isblank(field_value) and allow_blank
-        print(tag, field_value)
-        if field_value.strip() or blank_and_allowed:
-            # Here we only accept non-blank field values, empty values
-            # (if they are allowed by the given keyword argument), and also
-            # all required fields.
-            fields[tag] = field_value
-
+    ctx = map_tags(record, tagfuncs, **kw)
+    
     if bibkey is None:
         try:
-            authors_or_editors = fields['author']
+            authors_or_editors = ctx['author']
         except KeyError:
-            authors_or_editors = fields['editor']
+            authors_or_editors = ctx['editor']
         surname = authors_or_editors.split(',')[0]
-        bibkey = surname.lower() + fields['year']
+        bibkey = surname.lower() + ctx['year']
 
     indent = kw.get('indent', 1)
     align = kw.get('align', False)
-    
-    return _as_bibtex(bibtype, bibkey, fields, indent, align=align)
+
+    as_bibtex = _as_bibtex(bibtype, bibkey, ctx, indent, align=align)
+    return as_bibtex
