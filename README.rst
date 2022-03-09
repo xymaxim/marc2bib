@@ -47,7 +47,7 @@ data from a MARC file and convert it to a BibTeX entry:
           }
 
 And that is it!
-
+	  
 More examples
 -------------
 
@@ -85,18 +85,35 @@ including separately.
 Convert to BibTeX or just map tags
 **********************************
 
-Instead of converting MARC data to BibTeX string, you can convert it
-to a dictionary of BibTeX tags (fields) for inspection or
-post-processing:
+The main function of this package is ``convert(...)``. It combines two
+steps: (1) mapping MARC fields to BiBTex tags and (2) converting the
+tags to BibTeX string. However, instead of converting MARC data to
+BibTeX string in one call, you can map it to a dictionary of BibTeX
+tags (fields) for inspection or post-processing (step 1):
 
 .. code:: python
 
 	  >>> from marc2bib import map_tags
 
-	  >>> tags = map_tags(record, include='all')
+	  >>> tags = map_tags(record)
 	  >>> print(tags['author'])
 	  Author, Name
-	  	  
+
+Then, you can convert these mapped tags to a BibTeX string (step 2): 
+
+.. code:: python
+
+	  >>> from marc2bib import tags_to_bibtex
+
+	  >>> new_bibkey = tags['author'].split(',')[0] + tags['year']
+	  >>> # By the way, the indentation is customizable.
+	  >>> bibtex = tags_to_bibtex(tags, bibkey=new_bibkey, indent=4)
+	  >>> print(bibtex)
+	  @book{Author2022,
+              author = {Author, Name},
+              . . .
+          }
+	  
 Testing
 -------
 

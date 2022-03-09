@@ -18,7 +18,7 @@ original manual dated 1988 [5].
 
 import warnings
 
-from pymarc import Record
+from pymarc import MARCReader, Record
 
 from . import tagfuncs as default_tagfuncs
 
@@ -53,11 +53,11 @@ class Marc2bibError(Exception):
 def _isblank(string):
     return string.strip() == ''
 
-def _as_bibtex(bibtype, bibkey, fields, indent, align=False):
-    tag_width = max(map(len, fields)) if align else 0
+def _as_bibtex(bibtype, bibkey, tags, indent, align):
+    tag_width = max(map(len, tags)) if align else 0
         
     bibtex = f'@{bibtype}{{{bibkey}'
-    for tag, value in sorted(fields.items()):
+    for tag, value in sorted(tagss.items()):
         bibtex += f',\n{" " * indent}{tag:<{tag_width}} = {{{value}}}'
     bibtex += '\n}\n'
     
@@ -132,7 +132,20 @@ def map_tags(record, tagfuncs=None, **kw):
 
     return tags
 
-def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
+def tags_to_bibtex(tags, bibtype='book', bibkey=None, indent=1, align=False):
+    if bibkey is None:
+        try:
+            authors_or_editors = tags['author']
+        except KeyError:
+            authors_or_editors = tags['editor']
+        surname = authors_or_editors.split(',')[0]
+        bibkey = surname.lower() + tags['year']
+
+    bibtex = _as_bibtex(bibtype, bibkey, tags, indent, align)
+
+    return bibtex
+    
+def convert(record=None, ctx=None, bibtype='book', bibkey=None, tagfuncs=None, **kw):
     """Converts an instance of :class:`pymarc.Record` to a BibTeX entry.
 
     By default all defined (required and optional) fields (tags) for
@@ -176,18 +189,10 @@ def convert(record, bibtype='book', bibkey=None, tagfuncs=None, **kw):
         A BibTeX-formatted string.
 
     """
-    ctx = map_tags(record, tagfuncs, **kw)
-    
-    if bibkey is None:
-        try:
-            authors_or_editors = ctx['author']
-        except KeyError:
-            authors_or_editors = ctx['editor']
-        surname = authors_or_editors.split(',')[0]
-        bibkey = surname.lower() + ctx['year']
-
     indent = kw.get('indent', 1)
     align = kw.get('align', False)
 
-    as_bibtex = _as_bibtex(bibtype, bibkey, ctx, indent, align=align)
-    return as_bibtex
+    tags = map_tags(record, tagfuncs, **kw)
+    bibtex = tags_to_bibtex(tags, bibtype, bibkey, indent, align)
+
+    return bibtex
