@@ -49,3 +49,7 @@ def test_volume(rec_sholokhov):
 def test_series(rec_clusters):
     output = convert(rec_clusters, include=['series'])
     assert ' series = {Cluster physics}' in output
+
+def test_pages(rec_hargittai):
+    output = convert(rec_hargittai, include=['pages'])
+    assert ' pages = {520}' in output

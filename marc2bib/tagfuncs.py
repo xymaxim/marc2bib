@@ -1,5 +1,8 @@
 """Here are all currently defined tag-functions."""
 
+import re
+
+
 def get_address(record):
     field = record.get_fields('260', '264')[0]
     address = field['a']
@@ -51,7 +54,14 @@ def get_volume(record):
         return None
 
 def get_pages(record):
-    raise NotImplementedError
+    field = record['300']
+    p = re.search('([0-9]+) p.', field['a'])
+
+    if p:
+        pages = p.group(1)
+        return pages
+    else:
+        return None
 
 def get_note(record):
     raise NotImplementedError
