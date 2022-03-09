@@ -27,7 +27,9 @@ Quickstart
 ----------
 
 The package works along with `pymarc
-<https://gitlab.com/pymarc/pymarc>`_ to read MARC files. If you have not used it before, nothing to worry about. Let's read some data from a MARC file and convert it to a BibTeX entry:
+<https://gitlab.com/pymarc/pymarc>`_ utilized to read MARC
+files. If you have not used it before, nothing to worry about. Let's
+read some data from a MARC file and convert it to a BibTeX entry:
 
 .. code:: python
 
