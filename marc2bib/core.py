@@ -139,9 +139,13 @@ def tags_to_bibtex(tags, bibtype='book', bibkey=None, indent=1, align=False):
         except KeyError:
             authors_or_editors = tags['editor']
         surname = authors_or_editors.split(',')[0]
-        bibkey = surname.lower() + tags['year']
+        bibkey_value = surname.lower() + tags['year']
+    elif callable(bibkey):
+        bibkey_value = bibkey(tags)
+    else:
+        bibkey_value = bibkey
 
-    bibtex = _as_bibtex(bibtype, bibkey, tags, indent, align)
+    bibtex = _as_bibtex(bibtype, bibkey_value, tags, indent, align)
 
     return bibtex
     

@@ -88,8 +88,8 @@ Convert to BibTeX or just map tags
 The main function of this package is ``convert(...)``. It combines two
 steps: (1) mapping MARC fields to BiBTex tags and (2) converting the
 tags to BibTeX string. However, instead of converting MARC data to
-BibTeX string in one call, you can map it to a dictionary of BibTeX
-tags (fields) for inspection or post-processing (step 1):
+BibTeX string in one call, you can first map it to a dictionary of
+BibTeX tags (fields) for inspection or post-processing (step 1):
 
 .. code:: python
 
@@ -113,6 +113,16 @@ Then, you can convert these mapped tags to a BibTeX string (step 2):
               author = {Author, Name},
               . . .
           }
+
+Of course, the example below can be coded with ``convert(...)``
+function and the choice depends on your needs:
+
+.. code:: python
+
+	  # The bibkey argument can be callable.
+	  def new_bibkey(tags):
+	     return tags['author'].split(',')[0] + tags['year']
+	  convert(record, bibkey=new_bibkey, indent=4)
 	  
 Testing
 -------

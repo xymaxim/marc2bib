@@ -87,3 +87,8 @@ def test_author_or_editor_with_blank(rec_clusters):
     output = convert(rec_clusters, allow_blank=True)
     assert ' author = ' not in output
     assert ' editor = {Jellinek, J.}' in output
+
+def test_callable_bibkey(rec_hargittai):
+    func = lambda tags: tags['author'].split(',')[0]
+    output = convert(rec_hargittai, bibkey=func)
+    assert '@book{Hargittai,' in output
