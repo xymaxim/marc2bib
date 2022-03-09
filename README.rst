@@ -122,6 +122,7 @@ function and the choice depends on your needs:
 	  # The bibkey argument can be callable.
 	  def new_bibkey(tags):
 	     return tags['author'].split(',')[0] + tags['year']
+	     
 	  convert(record, bibkey=new_bibkey, indent=4)
 	  
 Testing
