@@ -79,6 +79,9 @@ only required (default), or required with user-defined ones:
 	  # Return required tags and 'pages'
 	  convert(record, include=['pages']) # or 'all', 'required' 
 
+A note: if you use tag-functions, no need to specify these tags for
+including separately.
+
 Convert to BibTeX or just map tags
 **********************************
 
