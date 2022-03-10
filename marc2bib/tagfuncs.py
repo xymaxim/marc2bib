@@ -24,14 +24,30 @@ def get_edition(record):
 
 def get_editor(record):
     eds = [ed['a'].rstrip(',') for ed in record.get_fields('700')]
-    return ' and '.join(eds)
+    if eds:
+        return ' and '.join(eds)
+    else:
+        return None
 
 def get_publisher(record):
-    return record.publisher().rstrip(',').rstrip(' ;')
+    publisher = record.publisher()
+    if publisher:
+        return publisher.rstrip(',').rstrip(' ;')
+    else:
+        return None
 
 def get_title(record):
-    title = record['245']['a']
-    subtitle = record['245']['b']
+    field = record['245']
+    
+    try:
+        title = field['a']
+    except TypeError:
+        return None
+    try:  
+        subtitle = field['b']
+    except TypeError:
+        subtitle = None
+    
     if subtitle:
         # Remove the extra whitespace between the title and a colon,
         # or append a colon to the title.
@@ -41,10 +57,15 @@ def get_title(record):
         rv = title + subtitle.rstrip('.')
     else:
         rv = title
+        
     return rv.rstrip(' /')
 
 def get_year(record):
-    return record.pubyear().lstrip('c').rstrip('.')
+    year = record.pubyear()
+    if year:
+        return year.lstrip('c').rstrip('.')
+    else:
+        return None
 
 def get_volume(record):
     field = record['300']

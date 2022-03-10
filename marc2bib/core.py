@@ -176,7 +176,7 @@ def convert(record=None, ctx=None, bibtype='book', bibkey=None, tagfuncs=None, *
             convert(record, tagfuncs={'tag': tagfunc})
 
     Keyword args:
-        include: Defaults to 'all'. The value can be either
+        include: Defaults to 'required'. The value can be either
             * 'all' -- include all defined tags for the given ``bibtype``
             * 'required' -- include only required tags for the given
                             ``bibtype``
