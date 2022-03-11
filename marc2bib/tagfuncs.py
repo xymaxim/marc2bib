@@ -9,9 +9,25 @@ def get_address(record):
     return address.replace('[', '').replace(']', '').rstrip(' : ')
 
 def get_author(record):
-    field = record['100']
-    if field:
-        return field['a'].rstrip('.')
+    # https://www.loc.gov/marc/bibliographic/bd1xx.html
+    # https://www.loc.gov/marc/bibliographic/bd400.html
+    # https://www.loc.gov/marc/bibliographic/bd600.html
+    # https://www.loc.gov/marc/bibliographic/bd800.html
+    fields = record.get_fields('100', '110', '400', '600', '800')
+
+    if fields:
+        field = fields[0]
+        # In this case the subfield value is pronoun
+        if field.tag == '400' and field.indicator2 == '1':
+            rv = None
+        else:
+            value = field['a']
+            # Check if the subfield value ends with the initials
+            if re.findall(r'(?:[A-Z].)+$', value):
+                rv = value
+            else:
+                rv = value.rstrip('.,:')
+            return rv
     else:
         return None
 
