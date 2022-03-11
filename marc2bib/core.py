@@ -66,8 +66,11 @@ def _as_bibtex(bibtype, bibkey, tags, indent, align):
 
 def map_tags(record, tagfuncs=None, **kw):
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
-    include_arg = kw.get('include', 'required')
+    if kw.get('version', 'bibtex') == 'biblatex':
+        ctx_tagfuncs['location'] = ctx_tagfuncs.pop('address')
 
+    include_arg = kw.get('include', 'required')
+    
     if include_arg == 'all':
         ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
     elif include_arg != 'required':
