@@ -28,22 +28,22 @@ from . import tagfuncs as default_tagfuncs
 # fields. See convert function to know how they are treated,
 # especially in case if both fields are requested.
 BOOK_REQ_TAGFUNCS = {
-    'author': default_tagfuncs.get_author,
-    'editor': default_tagfuncs.get_editor,
-    'publisher': default_tagfuncs.get_publisher,
-    'title': default_tagfuncs.get_title,
-    'year': default_tagfuncs.get_year,
+    "author": default_tagfuncs.get_author,
+    "editor": default_tagfuncs.get_editor,
+    "publisher": default_tagfuncs.get_publisher,
+    "title": default_tagfuncs.get_title,
+    "year": default_tagfuncs.get_year,
 }
 
 BOOK_OPT_TAGFUNCS = {
-    'address': default_tagfuncs.get_address,
-    'edition': default_tagfuncs.get_edition,
-    'volume': default_tagfuncs.get_volume,
-    'note': default_tagfuncs.get_note,
-    'number': default_tagfuncs.get_volume,
-    'pages': default_tagfuncs.get_pages,
-    'series': default_tagfuncs.get_series,
-    'isbn': Record.isbn,
+    "address": default_tagfuncs.get_address,
+    "edition": default_tagfuncs.get_edition,
+    "volume": default_tagfuncs.get_volume,
+    "note": default_tagfuncs.get_note,
+    "number": default_tagfuncs.get_volume,
+    "pages": default_tagfuncs.get_pages,
+    "series": default_tagfuncs.get_series,
+    "isbn": Record.isbn,
 }
 
 
@@ -51,41 +51,40 @@ class Marc2bibError(Exception):
     pass
 
 
-def _isblank(string : str) -> bool:
-    return string.strip() == ''
+def _isblank(string: str) -> bool:
+    return string.strip() == ""
+
 
 def _as_bibtex(
-    bibtype: str,
-    bibkey: str,
-    tags: Dict[str, str],
-    indent: int,
-    do_align: bool
+    bibtype: str, bibkey: str, tags: Dict[str, str], indent: int, do_align: bool
 ) -> str:
     tag_width = max(map(len, tags)) if do_align else 0
-        
-    bibtex = f'@{bibtype}{{{bibkey}'
+
+    bibtex = f"@{bibtype}{{{bibkey}"
     for tag, value in sorted(tags.items()):
         bibtex += f',\n{" " * indent}{tag:<{tag_width}} = {{{value}}}'
-    bibtex += '\n}\n'
-    
+    bibtex += "\n}\n"
+
     return bibtex
 
+
 TagfunctionsSig = Dict[str, Callable[[Record], str]]
+
 
 def map_tags(
     record: Record,
     tagfuncs: Optional[TagfunctionsSig] = None,
-    include: Union[str, Iterable[str]] = 'required',
-    version: str = 'bibtex',
-    allow_blank: bool = False
+    include: Union[str, Iterable[str]] = "required",
+    version: str = "bibtex",
+    allow_blank: bool = False,
 ) -> Dict[str, str]:
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
-    if version == 'biblatex':
-        ctx_tagfuncs['location'] = ctx_tagfuncs.pop('address')
+    if version == "biblatex":
+        ctx_tagfuncs["location"] = ctx_tagfuncs.pop("address")
 
-    if include == 'all':
+    if include == "all":
         ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
-    elif include != 'required':
+    elif include != "required":
         # Check if `include` argument is iterable and not a string.
         # We are no longer interested in a string because all
         # possible values are already passed.
@@ -93,16 +92,17 @@ def map_tags(
             assert not isinstance(include, str)
             iter(include)
         except (AssertionError, TypeError) as e:
-            msg = ("include argument should be an iterable or one of "
-                   f"('required', 'all'), got {include}")
+            msg = (
+                "include argument should be an iterable or one of "
+                f"('required', 'all'), got {include}"
+            )
             e.args += (msg,)
             raise ValueError(e)
         else:
             # Ensure that all of the user-provided tags has a
             # tag-function defined by default in optional tags.
             if not all(tag in BOOK_OPT_TAGFUNCS for tag in include):
-                raise ValueError(
-                    "include argument contains unknown optional tag(s)")
+                raise ValueError("include argument contains unknown optional tag(s)")
             for tag in include:
                 ctx_tagfuncs[tag] = BOOK_OPT_TAGFUNCS[tag]
 
@@ -112,31 +112,35 @@ def map_tags(
     tags = {}
 
     # Check for author field first, then editor.
-    author = ctx_tagfuncs['author'](record)
+    author = ctx_tagfuncs["author"](record)
     if author:
         # Editor field can be requested along with author.
-        if 'editor' not in include or 'editor' not in tagfuncs:
-            ctx_tagfuncs.pop('editor')
+        if "editor" not in include or "editor" not in tagfuncs:
+            ctx_tagfuncs.pop("editor")
     else:
-        editor = ctx_tagfuncs['editor'](record)
+        editor = ctx_tagfuncs["editor"](record)
         if editor is None:
             msg = "both author and editor (required) tags are treated empty."
             raise Marc2bibError(msg)
         else:
-            ctx_tagfuncs.pop('author')
-        
+            ctx_tagfuncs.pop("author")
+
     for tag, func in ctx_tagfuncs.items():
         tag_value = func(record)
         if not isinstance(tag_value, str) and tag_value is not None:
-            msg = (f"Returned value from {func} for {tag} tag "
-                   "should be a string or None")
+            msg = (
+                f"Returned value from {func} for {tag} tag "
+                "should be a string or None"
+            )
             raise TypeError(msg)
 
         if tag_value is None:
-            msg = (f"The content of tag `{tag}` is None, "
-                   "replacing it with an empty value")
+            msg = (
+                f"The content of tag `{tag}` is None, "
+                "replacing it with an empty value"
+            )
             warnings.warn(UserWarning(msg))
-            tag_value = ''
+            tag_value = ""
 
         blank_and_allowed = _isblank(tag_value) and allow_blank
         if tag_value.strip() or blank_and_allowed:
@@ -147,20 +151,21 @@ def map_tags(
 
     return tags
 
+
 def tags_to_bibtex(
     tags: Dict[str, str],
-    bibtype: str = 'book',
+    bibtype: str = "book",
     bibkey: Optional[Union[str, Callable[[Record], str]]] = None,
-    indent:int = 1,
-    do_align: bool = False
+    indent: int = 1,
+    do_align: bool = False,
 ) -> str:
     if bibkey is None:
         try:
-            authors_or_editors = tags['author']
+            authors_or_editors = tags["author"]
         except KeyError:
-            authors_or_editors = tags['editor']
-        surname = authors_or_editors.split(',')[0]
-        bibkey_value = surname.lower() + tags['year']
+            authors_or_editors = tags["editor"]
+        surname = authors_or_editors.split(",")[0]
+        bibkey_value = surname.lower() + tags["year"]
     elif callable(bibkey):
         bibkey_value = bibkey(tags)
     else:
@@ -170,15 +175,16 @@ def tags_to_bibtex(
 
     return bibtex
 
+
 def convert(
     record: Record,
-    bibtype: str = 'book',
+    bibtype: str = "book",
     bibkey: Optional[Union[str, Callable[[Record], str]]] = None,
     tagfuncs: Optional[TagfunctionsSig] = None,
-    include: Union[str, Iterable[str]] = 'required',
+    include: Union[str, Iterable[str]] = "required",
     allow_blank: bool = False,
     indent: int = 1,
-    do_align: bool = False
+    do_align: bool = False,
 ) -> str:
     """Converts an instance of :class:`pymarc.Record` to a BibTeX entry.
 
@@ -215,9 +221,9 @@ def convert(
         indent (int): The tag line indentation. Defaults to 1.
         align (bool): If True, align tag values by the longest tag.
             Defaults to False.
-        allow_blank (bool): If True, also include tags with a blank 
+        allow_blank (bool): If True, also include tags with a blank
             content (empty or contains only whitespace characters)
-            to the output. Defaults to False. 
+            to the output. Defaults to False.
 
     Returns:
         A BibTeX-formatted string.
