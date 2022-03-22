@@ -109,7 +109,7 @@ def map_tags(
     if tagfuncs:
         ctx_tagfuncs.update(tagfuncs)
 
-    tags = {}
+    ctx_tags = {}
 
     # Check for author field first, then editor.
     author = ctx_tagfuncs["author"](record)
@@ -147,9 +147,9 @@ def map_tags(
             # Here we only accept non-blank field values, empty values
             # (if they are allowed by the given keyword argument), and also
             # all required tags.
-            tags[tag] = tag_value
+            ctx_tags[tag] = tag_value
 
-    return tags
+    return ctx_tags
 
 
 def tags_to_bibtex(
