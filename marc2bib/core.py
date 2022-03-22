@@ -51,7 +51,7 @@ class Marc2bibError(Exception):
     pass
 
 
-def _isblank(string: str) -> bool:
+def _is_blank(string: str) -> bool:
     return string.strip() == ""
 
 
@@ -78,6 +78,7 @@ def map_tags(
     allow_blank: bool = False,
     version: str = "bibtex",
 ) -> Dict[str, str]:
+    """Map MARC fields of a record into the BibTeX tags."""
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
     if version == "biblatex":
         ctx_tagfuncs["location"] = ctx_tagfuncs.pop("address")
@@ -142,7 +143,7 @@ def map_tags(
             warnings.warn(UserWarning(msg))
             tag_value = ""
 
-        blank_and_allowed = _isblank(tag_value) and allow_blank
+        blank_and_allowed = _is_blank(tag_value) and allow_blank
         if tag_value.strip() or blank_and_allowed:
             # Here we only accept non-blank field values, empty values
             # (if they are allowed by the given keyword argument), and also
@@ -159,6 +160,7 @@ def tags_to_bibtex(
     indent: int = 1,
     do_align: bool = False,
 ) -> str:
+    """Translate BibTeX tags into a BibTeX-formatted string."""
     if bibkey is None:
         try:
             authors_or_editors = tags["author"]
@@ -195,35 +197,34 @@ def convert(
 
     Args:
         record: An instance of :class:`pymarc.Record`.
-        bibtype (Optional[str]): A BibTeX entry type. Currently only
+        bibtype: A BibTeX entry type. Currently only
             book entries are fully supported.
-        bibkey (Optional[str]): A BibTeX citation key. If ``None``, then
-            the author-date style is used, e.g. "author2022". If the
-            author is not provided, then the first editor will be used.
-        tagfuncs (Optional[dict]): A dictionary with functions used to
+        bibkey: A BibTeX citation key. If ``None``, then the
+            author-date style is used, e.g. "author2022". If the
+            author is not provided, then the first editor will be
+            used. Accepts callable with a Record as an argument.
+        tagfuncs: A dictionary of functions used to
             retrieve a BibTeX tag content. The key of the dictionary
             is the name of a particular tag. Your function (we call
             this tag-function) must take one argument, a reference to
             the given record, and return a string. Example usage::
 
-            def tagfunc(record):
+            def tagfunc(record: pymarc.Record) -> str:
                 # Insert your way to get the field value here.
                 ...
             convert(record, tagfuncs={'tag': tagfunc})
-
-    Keyword args:
         include: Defaults to 'required'. The value can be either
             * 'all' -- include all defined tags for the given ``bibtype``
             * 'required' -- include only required tags for the given
                             ``bibtype``
             * a list of tags to include together with the required
               ones. For example, ['edition'].
-        indent (int): The tag line indentation. Defaults to 1.
-        align (bool): If True, align tag values by the longest tag.
-            Defaults to False.
         allow_blank (bool): If True, also include tags with a blank
             content (empty or contains only whitespace characters)
             to the output. Defaults to False.
+        indent (int): The tag line indentation. Defaults to 1.
+        do_align: If True, align tag values by the longest tag.
+            Defaults to False.
 
     Returns:
         A BibTeX-formatted string.
