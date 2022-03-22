@@ -19,7 +19,7 @@ original manual dated 1988 [5].
 import warnings
 from typing import Callable, Dict, Iterable, Optional, Union
 
-from pymarc import MARCReader, Record
+from pymarc import MARCReader, Record  # type: ignore
 
 from . import tagfuncs as default_tagfuncs
 
@@ -75,8 +75,8 @@ def map_tags(
     record: Record,
     tagfuncs: Optional[TagfunctionsSig] = None,
     include: Union[str, Iterable[str]] = "required",
-    version: str = "bibtex",
     allow_blank: bool = False,
+    version: str = "bibtex",
 ) -> Dict[str, str]:
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
     if version == "biblatex":
@@ -229,7 +229,7 @@ def convert(
         A BibTeX-formatted string.
 
     """
-    tags = map_tags(record, tagfuncs, include=include, allow_blank=allow_blank)
-    bibtex = tags_to_bibtex(tags, bibtype, bibkey, indent, do_align)
+    ctx_tags = map_tags(record, tagfuncs, include, allow_blank)
+    bibtex = tags_to_bibtex(ctx_tags, bibtype, bibkey, indent, do_align)
 
     return bibtex

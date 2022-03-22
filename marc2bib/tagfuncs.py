@@ -4,7 +4,7 @@ import re
 
 from typing import Optional
 
-from pymarc import Record
+from pymarc import Record  # type: ignore
 
 
 def get_address(record: Record) -> Optional[str]:
