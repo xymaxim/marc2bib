@@ -52,7 +52,7 @@ def test_tag_values_alignment(rec_hargittai):
               " title     = {Symmetry through the eyes of a chemist},\n"
               " year      = {2009}\n"
               "}\n")
-    assert convert(rec_hargittai, include='required', align=True) == bibtex
+    assert convert(rec_hargittai, include='required', do_align=True) == bibtex
     
 def test_tag_with_none_value(rec_sholokhov):
     none_func = lambda _: None

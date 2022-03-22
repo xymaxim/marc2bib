@@ -2,8 +2,12 @@
 
 import re
 
+from typing import Optional
 
-def get_address(record):
+from pymarc import Record
+
+
+def get_address(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd25x28x.html
     fields = record.get_fields('260', '264')
     if fields:
@@ -12,7 +16,7 @@ def get_address(record):
     else:
         return None
 
-def get_author(record):
+def get_author(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd1xx.html
     # https://www.loc.gov/marc/bibliographic/bd400.html
     # https://www.loc.gov/marc/bibliographic/bd600.html
@@ -30,11 +34,11 @@ def get_author(record):
                 rv = value.rstrip(',: ')
             else:
                 rv = value.rstrip('.,: ')
-            return rv
+        return rv
     else:
         return None
 
-def get_edition(record):
+def get_edition(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd250.html
     field = record['250']
     if field:
@@ -42,14 +46,14 @@ def get_edition(record):
     else:
         return None
 
-def get_editor(record):
+def get_editor(record: Record) -> Optional[str]:
     eds = [ed['a'].rstrip(',') for ed in record.get_fields('700')]
     if eds:
         return ' and '.join(eds)
     else:
         return None
 
-def get_publisher(record):
+def get_publisher(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd25x28x.html
     publisher = record.publisher()
     if publisher:
@@ -57,7 +61,7 @@ def get_publisher(record):
     else:
         return None
 
-def get_title(record):
+def get_title(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd245.html
     field = record['245']
     
@@ -82,7 +86,7 @@ def get_title(record):
         
     return rv.rstrip(' /')
 
-def get_year(record):
+def get_year(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd25x28x.html
     year = record.pubyear()
     if year:
@@ -90,7 +94,7 @@ def get_year(record):
     else:
         return None
 
-def get_volume(record):
+def get_volume(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd300.html
     field = record['300']
     if field:
@@ -98,7 +102,7 @@ def get_volume(record):
     else:
         return None
 
-def get_pages(record):
+def get_pages(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd300.html
     field = record['300']
     if field:
@@ -107,10 +111,10 @@ def get_pages(record):
     else:
         return None
 
-def get_note(record):
+def get_note(record: Record) -> Optional[str]:
     raise NotImplementedError
 
-def get_series(record):
+def get_series(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd490.html
     field = record['490']
     if field:

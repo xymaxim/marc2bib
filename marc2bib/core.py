@@ -17,6 +17,7 @@ original manual dated 1988 [5].
 """
 
 import warnings
+from typing import Callable, Dict, Iterable, Optional, Union
 
 from pymarc import MARCReader, Record
 
@@ -50,11 +51,17 @@ class Marc2bibError(Exception):
     pass
 
 
-def _isblank(string):
+def _isblank(string : str) -> bool:
     return string.strip() == ''
 
-def _as_bibtex(bibtype, bibkey, tags, indent, align):
-    tag_width = max(map(len, tags)) if align else 0
+def _as_bibtex(
+    bibtype: str,
+    bibkey: str,
+    tags: Dict[str, str],
+    indent: int,
+    do_align: bool
+) -> str:
+    tag_width = max(map(len, tags)) if do_align else 0
         
     bibtex = f'@{bibtype}{{{bibkey}'
     for tag, value in sorted(tags.items()):
@@ -63,34 +70,40 @@ def _as_bibtex(bibtype, bibkey, tags, indent, align):
     
     return bibtex
 
+TagfunctionsSig = Dict[str, Callable[[Record], str]]
 
-def map_tags(record, tagfuncs=None, **kw):
+def map_tags(
+    record: Record,
+    tagfuncs: Optional[TagfunctionsSig] = None,
+    include: Union[str, Iterable[str]] = 'required',
+    version: str = 'bibtex',
+    allow_blank: bool = False
+) -> Dict[str, str]:
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
-    if kw.get('version', 'bibtex') == 'biblatex':
+    if version == 'biblatex':
         ctx_tagfuncs['location'] = ctx_tagfuncs.pop('address')
 
-    include_arg = kw.get('include', 'required')
-    
-    if include_arg == 'all':
+    if include == 'all':
         ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
-    elif include_arg != 'required':
-        # Check if `include_arg` argument is iterable and not a string.
+    elif include != 'required':
+        # Check if `include` argument is iterable and not a string.
         # We are no longer interested in a string because all
         # possible values are already passed.
         try:
-            assert not isinstance(include_arg, str)
-            iter(include_arg)
+            assert not isinstance(include, str)
+            iter(include)
         except (AssertionError, TypeError) as e:
-            msg = ("include_arg should be an iterable or one of "
-                   f"('required', 'all'), got {include_arg}")
+            msg = ("include argument should be an iterable or one of "
+                   f"('required', 'all'), got {include}")
             e.args += (msg,)
             raise ValueError(e)
         else:
             # Ensure that all of the user-provided tags has a
             # tag-function defined by default in optional tags.
-            if not all(tag in BOOK_OPT_TAGFUNCS for tag in include_arg):
-                raise ValueError("include_arg contains unknown optional tag(s)")
-            for tag in include_arg:
+            if not all(tag in BOOK_OPT_TAGFUNCS for tag in include):
+                raise ValueError(
+                    "include argument contains unknown optional tag(s)")
+            for tag in include:
                 ctx_tagfuncs[tag] = BOOK_OPT_TAGFUNCS[tag]
 
     if tagfuncs:
@@ -102,7 +115,7 @@ def map_tags(record, tagfuncs=None, **kw):
     author = ctx_tagfuncs['author'](record)
     if author:
         # Editor field can be requested along with author.
-        if 'editor' not in include_arg or 'editor' not in tagfuncs:
+        if 'editor' not in include or 'editor' not in tagfuncs:
             ctx_tagfuncs.pop('editor')
     else:
         editor = ctx_tagfuncs['editor'](record)
@@ -125,7 +138,6 @@ def map_tags(record, tagfuncs=None, **kw):
             warnings.warn(UserWarning(msg))
             tag_value = ''
 
-        allow_blank = kw.get('allow_blank', False)
         blank_and_allowed = _isblank(tag_value) and allow_blank
         if tag_value.strip() or blank_and_allowed:
             # Here we only accept non-blank field values, empty values
@@ -135,7 +147,13 @@ def map_tags(record, tagfuncs=None, **kw):
 
     return tags
 
-def tags_to_bibtex(tags, bibtype='book', bibkey=None, indent=1, align=False):
+def tags_to_bibtex(
+    tags: Dict[str, str],
+    bibtype: str = 'book',
+    bibkey: Optional[Union[str, Callable[[Record], str]]] = None,
+    indent:int = 1,
+    do_align: bool = False
+) -> str:
     if bibkey is None:
         try:
             authors_or_editors = tags['author']
@@ -148,11 +166,20 @@ def tags_to_bibtex(tags, bibtype='book', bibkey=None, indent=1, align=False):
     else:
         bibkey_value = bibkey
 
-    bibtex = _as_bibtex(bibtype, bibkey_value, tags, indent, align)
+    bibtex = _as_bibtex(bibtype, bibkey_value, tags, indent, do_align)
 
     return bibtex
-    
-def convert(record=None, ctx=None, bibtype='book', bibkey=None, tagfuncs=None, **kw):
+
+def convert(
+    record: Record,
+    bibtype: str = 'book',
+    bibkey: Optional[Union[str, Callable[[Record], str]]] = None,
+    tagfuncs: Optional[TagfunctionsSig] = None,
+    include: Union[str, Iterable[str]] = 'required',
+    allow_blank: bool = False,
+    indent: int = 1,
+    do_align: bool = False
+) -> str:
     """Converts an instance of :class:`pymarc.Record` to a BibTeX entry.
 
     By default all defined (required and optional) fields (tags) for
@@ -196,10 +223,7 @@ def convert(record=None, ctx=None, bibtype='book', bibkey=None, tagfuncs=None, *
         A BibTeX-formatted string.
 
     """
-    indent = kw.get('indent', 1)
-    align = kw.get('align', False)
-
-    tags = map_tags(record, tagfuncs, **kw)
-    bibtex = tags_to_bibtex(tags, bibtype, bibkey, indent, align)
+    tags = map_tags(record, tagfuncs, include=include, allow_blank=allow_blank)
+    bibtex = tags_to_bibtex(tags, bibtype, bibkey, indent, do_align)
 
     return bibtex
