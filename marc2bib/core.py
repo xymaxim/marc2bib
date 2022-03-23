@@ -78,7 +78,10 @@ def map_tags(
     allow_blank: bool = False,
     version: str = "bibtex",
 ) -> Dict[str, str]:
-    """Map MARC fields of a record into the BibTeX tags."""
+    """Map MARC fields of a record into the BibTeX tags.
+
+    See docstring of :obj:`marc2bib.convert()` for the arguments.
+    """
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
     if version == "biblatex":
         ctx_tagfuncs["location"] = ctx_tagfuncs.pop("address")
@@ -160,7 +163,10 @@ def tags_to_bibtex(
     indent: int = 1,
     do_align: bool = False,
 ) -> str:
-    """Translate BibTeX tags into a BibTeX-formatted string."""
+    """Translate BibTeX tags into a BibTeX-formatted string.
+
+    See docstring of :obj:`marc2bib.convert()'` for the arguments.
+    """
     if bibkey is None:
         try:
             authors_or_editors = tags["author"]
@@ -234,3 +240,8 @@ def convert(
     bibtex = tags_to_bibtex(ctx_tags, bibtype, bibkey, indent, do_align)
 
     return bibtex
+
+
+conv = Marc2BibConverter(record)
+conv.map_tags()
+conv.convert()
