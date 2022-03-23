@@ -240,8 +240,3 @@ def convert(
     bibtex = tags_to_bibtex(ctx_tags, bibtype, bibkey, indent, do_align)
 
     return bibtex
-
-
-conv = Marc2BibConverter(record)
-conv.map_tags()
-conv.convert()
