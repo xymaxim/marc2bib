@@ -43,6 +43,7 @@ BOOK_OPT_TAGFUNCS = {
     "number": default_tagfuncs.get_volume,
     "pages": default_tagfuncs.get_pages,
     "series": default_tagfuncs.get_series,
+    "subtitle": default_tagfuncs.get_subtitle,
     "isbn": Record.isbn,
 }
 

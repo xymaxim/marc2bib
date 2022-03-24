@@ -71,25 +71,20 @@ def get_title(record: Record) -> Optional[str]:
     field = record["245"]
 
     try:
-        title = field["a"]
+        rv = field["a"].rstrip(" :")
     except TypeError:
-        return None
+        rv = None
+    return rv
+
+
+def get_subtitle(record: Record) -> Optional[str]:
+    # https://www.loc.gov/marc/bibliographic/bd245.html
+    field = record["245"]
     try:
-        subtitle = field["b"]
+        rv = field["b"].rstrip(" /")
     except TypeError:
-        subtitle = None
-
-    if subtitle:
-        # Remove the extra whitespace between the title and a colon,
-        # or append a colon to the title.
-        # (Title : subtitle -> Title: subtitle)
-        # (Title subtitle -> Title: subtitle)
-        title = "{}: ".format(title.rsplit(" :")[0])
-        rv = title + subtitle.rstrip(".")
-    else:
-        rv = title
-
-    return rv.rstrip(" /")
+        rv = None
+    return rv
 
 
 def get_year(record: Record) -> Optional[str]:
