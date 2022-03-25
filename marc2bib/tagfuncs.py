@@ -82,22 +82,19 @@ def get_publisher(record: Record) -> Optional[str]:
 def get_title(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd245.html
     field = record["245"]
-
     try:
-        rv = field["a"]
+        return field["a"]
     except TypeError:
-        rv = None
-    return rv
+        return None
 
 
 def get_subtitle(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd245.html
     field = record["245"]
-    try:
-        rv = field["b"]
-    except TypeError:
-        rv = None
-    return rv
+    if field:
+        return field["b"]
+    else:
+        return None
 
 
 def get_year(record: Record) -> Optional[str]:
