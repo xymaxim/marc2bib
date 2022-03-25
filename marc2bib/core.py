@@ -22,6 +22,7 @@ from typing import Callable, Dict, Iterable, Optional, Union
 from pymarc import MARCReader, Record  # type: ignore
 
 from . import tagfuncs as default_tagfuncs
+from .tagfuncs import _trim_punctuation
 
 
 # By default, book entry may contain either one of author or editor
@@ -152,7 +153,7 @@ def map_tags(
             # Here we only accept non-blank field values, empty values
             # (if they are allowed by the given keyword argument), and also
             # all required tags.
-            ctx_tags[tag] = tag_value
+            ctx_tags[tag] = _trim_punctuation(tag_value)
 
     return ctx_tags
 

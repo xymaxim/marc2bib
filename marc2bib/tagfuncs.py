@@ -7,6 +7,19 @@ from typing import Optional
 from pymarc import Record  # type: ignore
 
 
+def _trim_punctuation(s: str) -> str:
+    s = re.sub(r"\s([:;/=])$", "", s)
+
+    name_suffix_search = re.search(r"(?:[JS][r][\.]?)$", s)
+    initials_search = re.search(r"(?:[A-Z][\.])$", s)
+    ends_abbrevs = s.endswith(("v.", "ed."))
+
+    if not (name_suffix_search or initials_search or ends_abbrevs):
+        s = re.sub(r"(?<=\w)(\.)$", "", s)
+
+    return s
+
+
 def get_address(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd25x28x.html
     fields = record.get_fields("260", "264")
@@ -71,7 +84,7 @@ def get_title(record: Record) -> Optional[str]:
     field = record["245"]
 
     try:
-        rv = field["a"].rstrip(" :")
+        rv = field["a"]
     except TypeError:
         rv = None
     return rv
@@ -81,7 +94,7 @@ def get_subtitle(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd245.html
     field = record["245"]
     try:
-        rv = field["b"].rstrip(" /")
+        rv = field["b"]
     except TypeError:
         rv = None
     return rv

@@ -1,5 +1,6 @@
 import pytest
 from marc2bib import convert
+from marc2bib.tagfuncs import _trim_punctuation
 
 
 def test_required_book_tags(rec_hargittai):
@@ -66,3 +67,32 @@ def test_series(rec_clusters):
 def test_pages(rec_hargittai):
     output = convert(rec_hargittai, include=["pages"])
     assert "pages = {520}" in output
+
+
+class TestTrimTrailingPunctuation:
+    def test_trailing_space_and_punctuation(self):
+        assert "One, two" == _trim_punctuation("One, two :")
+        assert "One, two" == _trim_punctuation("One, two ;")
+        assert "One, two" == _trim_punctuation("One, two /")
+        assert "One, two" == _trim_punctuation("One, two =")
+        assert "One, two" == _trim_punctuation("One, two .")
+
+    def test_punctuation_without_space(self):
+        assert "One, two" == _trim_punctuation("One, two.")
+
+    def test_double_initials(self):
+        assert "One, two A.B." == _trim_punctuation("One, two A.B.")
+        assert "One, two A. B." == _trim_punctuation("One, two A. B.")
+        
+    def test_name_suffix(self):
+        assert "John Doe, Jr." == _trim_punctuation("John Doe, Jr.")
+
+    def test_known_abbreviations(self):
+        assert "One, two, 1 v." == _trim_punctuation("One, two, 1 v.")
+        assert "One, two, 1 ed." == _trim_punctuation("One, two, 1 ed.")
+        
+    def test_trailing_space_and_punctuation(self):
+        assert "One, two..." == _trim_punctuation("One, two...")
+        
+    def test_year(self):
+        assert "2001" == _trim_punctuation("2001.")
