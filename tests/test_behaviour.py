@@ -14,7 +14,7 @@ def test_not_str_tagfunc_return(rec_hargittai):
 def test_include_only_required_fields(rec_hargittai):
     bibtex = (
         "@book{hargittai2009,\n"
-        " author = {Hargittai, István},\n"
+        " author = {Hargittai, Magdolna},\n"
         " publisher = {Springer},\n"
         " title = {Symmetry through the eyes of a chemist},\n"
         " year = {2009}\n"
@@ -26,7 +26,7 @@ def test_include_only_required_fields(rec_hargittai):
 def test_different_indent(rec_hargittai):
     bibtex = (
         "@book{hargittai2009,\n"
-        "  author = {Hargittai, István},\n"
+        "  author = {Hargittai, Magdolna},\n"
         "  publisher = {Springer},\n"
         "  title = {Symmetry through the eyes of a chemist},\n"
         "  year = {2009}\n"
@@ -60,7 +60,7 @@ def test_include_with_non_existent_tag(rec_hargittai):
 def test_tag_values_alignment(rec_hargittai):
     bibtex = (
         "@book{hargittai2009,\n"
-        " author    = {Hargittai, István},\n"
+        " author    = {Hargittai, Magdolna},\n"
         " publisher = {Springer},\n"
         " title     = {Symmetry through the eyes of a chemist},\n"
         " year      = {2009}\n"

@@ -5,7 +5,7 @@ from marc2bib import convert
 def test_required_book_tags(rec_hargittai):
     bibtex = (
         "@book{hargittai2009,\n"
-        " author = {Hargittai, István},\n"
+        " author = {Hargittai, Magdolna},\n"
         " publisher = {Springer},\n"
         " title = {Symmetry through the eyes of a chemist},\n"
         " year = {2009}\n"

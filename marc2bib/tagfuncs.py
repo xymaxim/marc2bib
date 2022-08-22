@@ -69,7 +69,7 @@ def get_title(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd245.html
     field = record["245"]
     try:
-        return field["a"].rstrip(" .:;")
+        return field["a"].rstrip(" .:;/")
     except TypeError:
         return None
 
