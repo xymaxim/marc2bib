@@ -1,23 +1,9 @@
 """Here are all currently defined tag-functions."""
 
 import re
-
 from typing import Optional
 
 from pymarc import Record  # type: ignore
-
-
-def _trim_punctuation(s: str) -> str:
-    s = re.sub(r"\s([:;/=])$", "", s)
-
-    name_suffix_search = re.search(r"(?:[JS][r][\.]?)$", s)
-    initials_search = re.search(r"(?:[A-Z][\.])$", s)
-    ends_abbrevs = s.endswith(("v.", "ed."))
-
-    if not (name_suffix_search or initials_search or ends_abbrevs):
-        s = re.sub(r"(?<=\w)(\.)$", "", s)
-
-    return s
 
 
 def get_address(record: Record) -> Optional[str]:
@@ -83,7 +69,7 @@ def get_title(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd245.html
     field = record["245"]
     try:
-        return field["a"]
+        return field["a"].rstrip(" .:;")
     except TypeError:
         return None
 
@@ -92,7 +78,7 @@ def get_subtitle(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd245.html
     field = record["245"]
     if field:
-        return field["b"]
+        return field["b"].rstrip(" ./")
     else:
         return None
 
