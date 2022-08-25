@@ -20,15 +20,15 @@ def test_custom_bibtype(rec_hargittai):
 
 
 def test_custom_tagfuncs(rec_hargittai):
-    custom_tagfuncs = dict(title=lambda _: "Meow")
+    custom_tagfuncs = dict(title=lambda _: "Test")
     output = convert(rec_hargittai, tagfuncs=custom_tagfuncs)
-    assert "title = {Meow}" in output
+    assert "title = {Test}" in output
 
 
 def test_extend_tagfuncs(rec_hargittai):
-    new_tagfuncs = dict(new=lambda _: "Meow")
+    new_tagfuncs = dict(new=lambda _: "Test")
     output = convert(rec_hargittai, tagfuncs=new_tagfuncs)
-    assert "new = {Meow},\n" in output
+    assert "new = {Test},\n" in output
 
 
 def test_new_bibkey(rec_hargittai):
@@ -50,8 +50,10 @@ def test_another_publication_field(rec_tsing):
 def test_subtitle(rec_tsing):
     output = convert(rec_tsing, include=["subtitle"])
     assert "title = {The mushroom at the end of the world}" in output
-    assert "subtitle = {on the possibility of life in capitalist ruins}" in output
-    
+    assert (
+        "subtitle = {on the possibility of life in capitalist ruins}" in output
+    )
+
 
 def test_volume(rec_sholokhov):
     output = convert(rec_sholokhov, include=["volume"])

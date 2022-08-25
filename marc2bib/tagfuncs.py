@@ -60,7 +60,7 @@ def get_publisher(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd25x28x.html
     publisher = record.publisher()
     if publisher:
-        return publisher.rstrip(",: ")
+        return publisher
     else:
         return None
 
@@ -69,7 +69,7 @@ def get_title(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd245.html
     field = record["245"]
     try:
-        return field["a"].rstrip(" .:;/")
+        return field["a"]
     except TypeError:
         return None
 
@@ -78,7 +78,7 @@ def get_subtitle(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd245.html
     field = record["245"]
     if field:
-        return field["b"].rstrip(" ./")
+        return field["b"]
     else:
         return None
 
@@ -87,7 +87,7 @@ def get_year(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd25x28x.html
     year = record.pubyear()
     if year:
-        return year.lstrip("c").rstrip(".")
+        return year.lstrip("c")
     else:
         return None
 

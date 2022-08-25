@@ -1,7 +1,6 @@
 *~
 \#*\#
 .\#*
-ve/
 dist/
 *.egg-info/
 .cache/

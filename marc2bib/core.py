@@ -16,6 +16,7 @@ original manual dated 1988 [5].
 [5] http://ctan.uni-altai.ru/biblio/bibtex/base/btxdoc.pdf
 """
 
+import re
 import warnings
 from typing import Callable, Dict, Iterable, Optional, Union
 
@@ -51,12 +52,38 @@ class Marc2bibError(Exception):
     pass
 
 
+def remove_punctuation(s: str) -> str:
+    terminal_chars = ".,:;+=/"
+    common_abbrevs = ("v.", "vol.", "vols.", "ed.", "eds.", "et al.")
+
+    s = re.sub(rf"\s([{terminal_chars}])$", "", s)
+
+    ends_with_suffix = bool(re.search(r"[JS]r\.$", s))
+    ends_with_initials = bool(re.search(r"[A-Z]\.$", s))
+    ends_with_ordinal = bool(re.search(r"\d(st|nd|rd|th)\.$", s))
+    ends_with_ellipsis = bool(re.search(r"\w\.{3}$", s))
+    ends_with_abbrev = s.endswith(common_abbrevs)
+
+    # fmt: off
+    if not (ends_with_suffix or ends_with_initials or ends_with_ordinal or
+            ends_with_ellipsis or ends_with_abbrev):
+        s = re.sub(r"(?<=\w)(\.)$", "", s)
+        s = s.rstrip(terminal_chars)
+    # fmt: on
+
+    return s
+
+
 def _is_blank(string: str) -> bool:
     return string.strip() == ""
 
 
 def _as_bibtex(
-    bibtype: str, bibkey: str, tags: Dict[str, str], indent: int, do_align: bool
+    bibtype: str,
+    bibkey: str,
+    tags: Dict[str, str],
+    indent: int,
+    do_align: bool,
 ) -> str:
     tag_width = max(map(len, tags)) if do_align else 0
 
@@ -106,7 +133,9 @@ def map_tags(
             # Ensure that all of the user-provided tags has a
             # tag-function defined by default in optional tags.
             if not all(tag in BOOK_OPT_TAGFUNCS for tag in include):
-                raise ValueError("include argument contains unknown optional tag(s)")
+                raise ValueError(
+                    "include argument contains unknown optional tag(s)"
+                )
             for tag in include:
                 ctx_tagfuncs[tag] = BOOK_OPT_TAGFUNCS[tag]
 
@@ -151,7 +180,7 @@ def map_tags(
             # Here we only accept non-blank field values, empty values
             # (if they are allowed by the given keyword argument), and also
             # all required tags.
-            ctx_tags[tag] = tag_value
+            ctx_tags[tag] = remove_punctuation(tag_value)
 
     return ctx_tags
 
