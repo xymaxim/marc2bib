@@ -21,6 +21,7 @@ def test_year():
 
 def test_initials():
     assert "A.B." == remove_punctuation("A.B.")
+    assert "A.B." == remove_punctuation("A.B.,")
 
 
 def test_name_suffixes():
@@ -37,3 +38,11 @@ def test_ordinal_numbers():
     assert "2nd." == remove_punctuation("2nd.")
     assert "3rd." == remove_punctuation("3rd.")
     assert "4th." == remove_punctuation("4th.")
+
+
+def test_common_abbreviation():
+    assert "ed." == remove_punctuation("ed.")
+
+
+def test_common_abbreviation_in_any_case():
+    assert "Co." == remove_punctuation("Co.")

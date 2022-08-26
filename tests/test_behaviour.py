@@ -78,7 +78,6 @@ def test_tag_with_none_value(rec_sholokhov):
         assert " none = {None}" not in output
 
 
-@pytest.mark.skip()
 def test_disallow_blank_tags_by_default(rec_sholokhov):
     tagfuncs = {
         "firstblank": lambda _: "",
@@ -89,7 +88,6 @@ def test_disallow_blank_tags_by_default(rec_sholokhov):
     assert " secondblank =" not in output
 
 
-@pytest.mark.skip()
 def test_allow_blank_tags(rec_sholokhov):
     tagfuncs = {
         "firstblank": lambda _: "",

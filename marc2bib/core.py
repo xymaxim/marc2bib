@@ -54,7 +54,7 @@ class Marc2bibError(Exception):
 
 def remove_punctuation(s: str) -> str:
     terminal_chars = ".,:;+=/"
-    common_abbrevs = ("v.", "vol.", "vols.", "ed.", "eds.", "et al.")
+    common_abbrevs = ('co.', 'ed.', 'eds.', 'et al.', 'v.', 'vol.', 'vols.')
 
     s = re.sub(fr"\s([{terminal_chars}])$", "", s)
 
@@ -62,7 +62,7 @@ def remove_punctuation(s: str) -> str:
     ends_with_initials = bool(re.search(r"[A-Z]\.$", s))
     ends_with_ordinal = bool(re.search(r"\d(st|nd|rd|th)\.$", s))
     ends_with_ellipsis = bool(re.search(r"\w\.{3}$", s))
-    ends_with_abbrev = s.endswith(common_abbrevs)
+    ends_with_abbrev = s.lower().endswith(common_abbrevs)
 
     # fmt: off
     if not (ends_with_suffix or ends_with_initials or ends_with_ordinal or
