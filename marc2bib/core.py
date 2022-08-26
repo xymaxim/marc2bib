@@ -56,7 +56,7 @@ def remove_punctuation(s: str) -> str:
     terminal_chars = ".,:;+=/"
     common_abbrevs = ("v.", "vol.", "vols.", "ed.", "eds.", "et al.")
 
-    s = re.sub(rf"\s([{terminal_chars}])$", "", s)
+    s = re.sub(fr"\s([{terminal_chars}])$", "", s)
 
     ends_with_suffix = bool(re.search(r"[JS]r\.$", s))
     ends_with_initials = bool(re.search(r"[A-Z]\.$", s))
@@ -67,8 +67,7 @@ def remove_punctuation(s: str) -> str:
     # fmt: off
     if not (ends_with_suffix or ends_with_initials or ends_with_ordinal or
             ends_with_ellipsis or ends_with_abbrev):
-        s = re.sub(r"(?<=\w)(\.)$", "", s)
-        s = s.rstrip(terminal_chars)
+        s = re.sub(fr"[{terminal_chars}]$", "", s)
     # fmt: on
 
     return s
