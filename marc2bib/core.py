@@ -52,17 +52,23 @@ class Marc2bibError(Exception):
     pass
 
 
+# fmt: off
+COMMON_ABBREVIATIONS = (
+    "co.", "ed.", "eds.", "et al.", "v.", "vol.", "vols.", "inc.", "p.",
+)
+# fmt: on
+
+
 def remove_punctuation(s: str) -> str:
     terminal_chars = ".,:;+=/"
-    common_abbrevs = ('co.', 'ed.', 'eds.', 'et al.', 'v.', 'vol.', 'vols.')
 
-    s = re.sub(fr"\s([{terminal_chars}])$", "", s)
+    s = re.sub(rf"\s([{terminal_chars}])$", "", s)
 
     ends_with_suffix = bool(re.search(r"[JS]r\.$", s))
     ends_with_initials = bool(re.search(r"[A-Z]\.$", s))
     ends_with_ordinal = bool(re.search(r"\d(st|nd|rd|th)\.$", s))
     ends_with_ellipsis = bool(re.search(r"\w\.{3}$", s))
-    ends_with_abbrev = s.lower().endswith(common_abbrevs)
+    ends_with_abbrev = s.lower().endswith(COMMON_ABBREVIATIONS)
 
     # fmt: off
     if not (ends_with_suffix or ends_with_initials or ends_with_ordinal or
