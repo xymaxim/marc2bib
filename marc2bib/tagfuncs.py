@@ -57,12 +57,7 @@ def get_editor(record: Record) -> Optional[str]:
 
 
 def get_publisher(record: Record) -> Optional[str]:
-    # https://www.loc.gov/marc/bibliographic/bd25x28x.html
-    publisher = record.publisher()
-    if publisher:
-        return publisher
-    else:
-        return None
+    return record.publisher()
 
 
 def get_title(record: Record) -> Optional[str]:
