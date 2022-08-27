@@ -39,6 +39,7 @@ BOOK_OPT_TAGFUNCS = {
     "address": default_tagfuncs.get_address,
     "edition": default_tagfuncs.get_edition,
     "volume": default_tagfuncs.get_volume,
+    "volumes": default_tagfuncs.get_volumes,
     "note": default_tagfuncs.get_note,
     "number": default_tagfuncs.get_volume,
     "pages": default_tagfuncs.get_pages,

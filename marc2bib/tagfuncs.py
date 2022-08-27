@@ -43,15 +43,25 @@ def get_edition(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd250.html
     field = record["250"]
     if field:
-        return field["a"].rstrip("/= ")
+        return field["a"]
     else:
         return None
 
 
 def get_editor(record: Record) -> Optional[str]:
-    eds = [ed["a"].rstrip(",") for ed in record.get_fields("700")]
-    if eds:
-        return " and ".join(eds)
+    editors = []
+    
+    fields = record.get_fields("700")
+    for field in fields:
+        editor = field["a"]
+        ends_with_initials = bool(re.search(r"[A-Z]\.$", editor))
+        if not ends_with_initials:
+            editors.append(editor.rstrip(".,"))
+        else:
+            editors.append(editor)
+
+    if editors:
+        return " and ".join(editors)
     else:
         return None
 
@@ -91,7 +101,27 @@ def get_volume(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd300.html
     field = record["300"]
     if field:
-        return field["a"]
+        # First, look up for roman numerals without validation in the
+        # beginning of the line:
+        p = re.search(r"^\[?([mdclxvi]+)\]?,", field["a"])
+        if p:
+            return p.group(1)
+        else:
+            # Then, try to find volume number with a preceeding literal:
+            p = re.search(r"v\.\s([0-9]+)", field["a"])
+            if p:
+                return p.group(1)
+            else:
+                return None
+    else:
+        return None
+
+def get_volumes(record: Record) -> Optional[str]:
+    # https://www.loc.gov/marc/bibliographic/bd300.html
+    field = record["300"]
+    if field:
+        p = re.search(r"([0-9]+)\s[v\s.|volumes]", field["a"])
+        return p.group(1) if p else None
     else:
         return None
 
@@ -100,7 +130,7 @@ def get_pages(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd300.html
     field = record["300"]
     if field:
-        p = re.search("([0-9]+) p.", field["a"])
+        p = re.search(r"\[?(([0-9]+-)?[0-9]+)\]?\s?p\.?", field["a"])
         return p.group(1) if p else None
     else:
         return None

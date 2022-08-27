@@ -1,5 +1,6 @@
 import pytest
 from marc2bib import convert
+from marc2bib.tagfuncs import get_volume, get_volumes, get_pages
 
 
 def test_required_book_tags(rec_hargittai):
@@ -56,8 +57,8 @@ def test_subtitle(rec_tsing):
 
 
 def test_volume(rec_sholokhov):
-    output = convert(rec_sholokhov, include=["volume"])
-    assert "volume = {4 v.}" in output
+    output = convert(rec_sholokhov, include=["volumes"])
+    assert "volumes = {4}" in output
 
 
 def test_series(rec_clusters):
@@ -65,6 +66,41 @@ def test_series(rec_clusters):
     assert "series = {Cluster physics}" in output
 
 
-def test_pages(rec_hargittai):
-    output = convert(rec_hargittai, include=["pages"])
-    assert "pages = {520}" in output
+def test_get_pages_abbreviated():
+    assert "123" == get_pages({"300": {"a": "123p."}})
+    assert "123" == get_pages({"300": {"a": "123 p."}})
+    assert "123" == get_pages({"300": {"a": "123 p"}})
+
+    
+def test_get_pages_non_abbreviated():
+    assert "123" == get_pages({"300": {"a": "123 pages"}})
+
+    
+def test_get_pages_in_brackets():
+    assert "123" == get_pages({"300": {"a": "[123] pages"}})
+
+    
+def test_get_range_of_pages():
+    assert "123-133" == get_pages({"300": {"a": "123-133 p."}})
+
+    
+def test_get_volume_in_arabic_numerals():
+    assert "1" == get_volume({"300": {"a": "v. 1"}})
+
+    
+def test_get_volume_in_roman_numerals():
+    assert "i" == get_volume({"300": {"a": "i,"}})
+    assert "xv" == get_volume({"300": {"a": "xv,"}})
+    assert "mdclxvi" == get_volume({"300": {"a": "mdclxvi,"}})
+
+    
+def test_get_volume_in_roman_numerals_with_brackets():
+    assert "ii" == get_volume({"300": {"a": "[ii],"}})
+
+    
+def test_get_volumes_abbreviated():
+    assert "2" == get_volumes({"300": {"a": "2 v."}})
+
+    
+def test_get_volumes_non_abbreviated():
+    assert "2" == get_volumes({"300": {"a": "2 volumes"}})
