@@ -59,11 +59,14 @@ COMMON_ABBREVIATIONS = (
 # fmt: on
 
 
-def remove_punctuation(s: str) -> str:
+def remove_records_punctuation(s: str, brackets: bool = False) -> str:
     terminal_chars = ".,:;+=/"
 
     s = re.sub(rf"\s([{terminal_chars}])$", "", s)
 
+    if brackets:
+        s = re.sub(r"(^\[|\][^\]]?$)", "", s)
+    
     ends_with_suffix = bool(re.search(r"[JS]r\.$", s))
     ends_with_initials = bool(re.search(r"[A-Z]\.$", s))
     ends_with_ordinal = bool(re.search(r"\d(st|nd|rd|th)\.$", s))
@@ -108,6 +111,7 @@ def map_tags(
     tagfuncs: Optional[TagfunctionsSig] = None,
     include: Union[str, Iterable[str]] = "required",
     allow_blank: bool = False,
+    remove_punctuation: bool = True,
     version: str = "bibtex",
 ) -> Dict[str, str]:
     """Map MARC fields of a record into the BibTeX tags.
@@ -185,7 +189,10 @@ def map_tags(
             # Here we only accept non-blank field values, empty values
             # (if they are allowed by the given keyword argument), and also
             # all required tags.
-            ctx_tags[tag] = remove_punctuation(tag_value)
+            if remove_punctuation:
+                ctx_tags[tag] = remove_records_punctuation(tag_value)
+            else:
+                ctx_tags[tag] = tag_value
 
     return ctx_tags
 
