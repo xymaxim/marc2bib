@@ -50,7 +50,7 @@ def get_edition(record: Record) -> Optional[str]:
 
 def get_editor(record: Record) -> Optional[str]:
     editors = []
-    
+
     fields = record.get_fields("700")
     for field in fields:
         editor = field["a"]
@@ -115,6 +115,7 @@ def get_volume(record: Record) -> Optional[str]:
                 return None
     else:
         return None
+
 
 def get_volumes(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd300.html
