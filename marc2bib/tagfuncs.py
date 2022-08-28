@@ -100,19 +100,16 @@ def get_year(record: Record) -> Optional[str]:
 def get_volume(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd300.html
     field = record["300"]
+
+    as_roman_numeral_re = r"^\[?([mdclxvi]+)\]?,"
+    with_abbrev_re = r"v\.\s([0-9]+)"
+    
     if field:
-        # First, look up for roman numerals without validation in the
-        # beginning of the line:
-        p = re.search(r"^\[?([mdclxvi]+)\]?,", field["a"])
-        if p:
-            return p.group(1)
-        else:
-            # Then, try to find volume number with a preceeding literal:
-            p = re.search(r"v\.\s([0-9]+)", field["a"])
-            if p:
-                return p.group(1)
-            else:
-                return None
+        volume_number_pa = re.compile(
+            r"|".join((as_roman_numeral_re, with_abbrev_re))
+        )
+        m = volume_number_pa.search(field["a"])
+        return m.group(1) or m.group(2)
     else:
         return None
 
