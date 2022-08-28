@@ -137,6 +137,6 @@ def get_series(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd490.html
     field = record["490"]
     if field:
-        return field["a"].rstrip(",")
+        return field["a"]
     else:
         return None
