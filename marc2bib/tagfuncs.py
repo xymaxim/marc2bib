@@ -28,12 +28,7 @@ def get_author(record: Record) -> Optional[str]:
         if field.tag == "400" and field.indicator2 == "1":
             rv = None
         else:
-            value = field["a"]
-            # Check if the subfield value ends with initials
-            if re.findall(r"(?:[A-Z].)+$", value):
-                rv = value.rstrip(",: ")
-            else:
-                rv = value.rstrip(".,: ")
+            rv = field["a"]
         return rv
     else:
         return None
@@ -103,7 +98,7 @@ def get_volume(record: Record) -> Optional[str]:
 
     as_roman_numeral_re = r"^\[?([mdclxvi]+)\]?,"
     with_abbrev_re = r"v\.\s([0-9]+)"
-    
+
     if field:
         volume_number_pa = re.compile(
             r"|".join((as_roman_numeral_re, with_abbrev_re))
