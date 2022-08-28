@@ -71,36 +71,36 @@ def test_get_pages_abbreviated():
     assert "123" == get_pages({"300": {"a": "123 p."}})
     assert "123" == get_pages({"300": {"a": "123 p"}})
 
-    
+
 def test_get_pages_non_abbreviated():
     assert "123" == get_pages({"300": {"a": "123 pages"}})
 
-    
+
 def test_get_pages_in_brackets():
     assert "123" == get_pages({"300": {"a": "[123] pages"}})
 
-    
+
 def test_get_range_of_pages():
     assert "123-133" == get_pages({"300": {"a": "123-133 p."}})
 
-    
+
 def test_get_volume_in_arabic_numerals():
     assert "1" == get_volume({"300": {"a": "v. 1"}})
 
-    
+
 def test_get_volume_in_roman_numerals():
     assert "i" == get_volume({"300": {"a": "i,"}})
     assert "xv" == get_volume({"300": {"a": "xv,"}})
     assert "mdclxvi" == get_volume({"300": {"a": "mdclxvi,"}})
 
-    
+
 def test_get_volume_in_roman_numerals_with_brackets():
     assert "ii" == get_volume({"300": {"a": "[ii],"}})
 
-    
+
 def test_get_volumes_abbreviated():
     assert "2" == get_volumes({"300": {"a": "2 v."}})
 
-    
+
 def test_get_volumes_non_abbreviated():
     assert "2" == get_volumes({"300": {"a": "2 volumes"}})
