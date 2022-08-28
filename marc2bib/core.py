@@ -60,14 +60,14 @@ COMMON_ABBREVIATIONS = (
 # fmt: on
 
 
-def remove_records_punctuation(s: str, brackets: bool = False) -> str:
+def remove_isbd_punctuation(s: str, brackets: bool = False) -> str:
     terminal_chars = ".,:;+=/"
 
     s = re.sub(rf"\s([{terminal_chars}])$", "", s)
 
     if brackets:
         s = re.sub(r"(^\[|\][^\]]?$)", "", s)
-    
+
     ends_with_suffix = bool(re.search(r"[JS]r\.$", s))
     ends_with_initials = bool(re.search(r"[A-Z]\.$", s))
     ends_with_ordinal = bool(re.search(r"\d(st|nd|rd|th)\.$", s))
@@ -191,7 +191,7 @@ def map_tags(
             # (if they are allowed by the given keyword argument), and also
             # all required tags.
             if remove_punctuation:
-                ctx_tags[tag] = remove_records_punctuation(tag_value)
+                ctx_tags[tag] = remove_isbd_punctuation(tag_value)
             else:
                 ctx_tags[tag] = tag_value
 
