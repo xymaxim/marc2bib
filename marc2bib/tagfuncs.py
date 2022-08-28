@@ -118,8 +118,8 @@ def get_volumes(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd300.html
     field = record["300"]
     if field:
-        p = re.search(r"([0-9]+)\s[v\s.|volumes]", field["a"])
-        return p.group(1) if p else None
+        m = re.search(r"([0-9]+)\s[v\s.|volumes]", field["a"])
+        return m.group(1) if m else None
     else:
         return None
 
@@ -128,8 +128,8 @@ def get_pages(record: Record) -> Optional[str]:
     # https://www.loc.gov/marc/bibliographic/bd300.html
     field = record["300"]
     if field:
-        p = re.search(r"\[?(([0-9]+-)?[0-9]+)\]?\s?p\.?", field["a"])
-        return p.group(1) if p else None
+        m = re.search(r"\[?(([0-9]+-)?[0-9]+)\]?\s?p\.?", field["a"])
+        return m.group(1) if m else None
     else:
         return None
 
