@@ -4,6 +4,7 @@ from pymarc import MARCReader
 from marc2bib import map_tags
 
 
+@pytest.mark.skipif("not config.getoption('runall')")
 def test_nlm_record_set():
     removed = "tests/validation/TestBibsWithIsbdPunctuationRemoved.mrc"
     original = "tests/validation/TestBibsWithIsbdPunctuation.mrc"
