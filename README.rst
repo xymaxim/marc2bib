@@ -5,7 +5,7 @@ marc2bib :book:
 	:target: https://pypi.python.org/pypi/marc2bib
 
 marc2bib is a Python package that allows to convert bibliographic
-records from MARC format to BibTeX entries.
+records from MARC 21 format to BibTeX entries.
 
 Installation
 ------------
@@ -20,7 +20,7 @@ Or for development:
 
 .. code:: sh
 
-	$ git clone https://github.com/mstolyarchuk/marc2bib
+	$ git clone https://github.com/xymaxim/marc2bib
 	$ pip install -e marc2bib
 
 Quickstart
@@ -36,7 +36,7 @@ data from a MARC file and convert it to a BibTeX entry:
           >>> from pymarc import MARCReader
           >>> from marc2bib import convert
 
-          >>> with open('file.mrc', 'rb') as f:
+          >>> with open("file.mrc", "rb") as f:
           ...     reader = MARCReader(f)
           ...     record = next(reader)  # read the first record
           ...     print(convert(record)) # convert it to a BibTeX entry
@@ -64,9 +64,9 @@ and optional tags. The user can extend or override them easily:
 	  from marc2bib import BOOK_REQ_TAGFUNCS
 
 	  def title_title(record):
-	      return BOOKS_REQ_TAGFUNCS['title'](record).title()
+	      return BOOKS_REQ_TAGFUNCS["title"](record).title()
 	      
-	  convert(record, tagfuncs={'title': title_title}) 
+	  convert(record, tagfuncs={"title": title_title}) 
 
 Customizing return
 ******************
@@ -76,8 +76,8 @@ only required (default), or required with user-defined ones:
 
 .. code:: python
 
-	  # Return required tags and 'pages'
-	  convert(record, include=['pages']) # or 'all', 'required' 
+	  # Return required tags and "pages"
+	  convert(record, include=["pages"]) # or 'all', 'required' 
 
 A note: if you use tag-functions, no need to specify these tags for
 including separately.
@@ -96,7 +96,7 @@ BibTeX tags (fields) for inspection or post-processing (step 1):
 	  >>> from marc2bib import map_tags
 
 	  >>> tags = map_tags(record)
-	  >>> print(tags['author'])
+	  >>> print(tags["author"])
 	  Author, Name
 
 Then, you can convert these mapped tags to a BibTeX string (step 2): 
@@ -105,7 +105,7 @@ Then, you can convert these mapped tags to a BibTeX string (step 2):
 
 	  >>> from marc2bib import tags_to_bibtex
 
-	  >>> new_bibkey = tags['author'].split(',')[0] + tags['year']
+	  >>> new_bibkey = tags["author"].split(",")[0] + tags["year"]
 	  >>> # By the way, the indentation is customizable.
 	  >>> bibtex = tags_to_bibtex(tags, bibkey=new_bibkey, indent=4)
 	  >>> print(bibtex)
@@ -121,20 +121,44 @@ function and the choice depends on your needs:
 
 	  # The bibkey argument can be callable.
 	  def new_bibkey(tags):
-	     return tags['author'].split(',')[0] + tags['year']
+	     return tags["author"].split(",")[0] + tags["year"]
 	     
 	  convert(record, bibkey=new_bibkey, indent=4)
-	  
+
+Removal of ISBD punctuation
+---------------------------
+
+In the MARC 21 format, the fields and subfields historically may
+contain and be separated by terminal periods and various punctuation
+marks
+[https://www.loc.gov/aba/pcc/documents/isbdmarc2016.pdf]. However, in
+BibTeX entries we do not need it. To clean up such punctuation we
+partially follow rules described in the link above (Appendix C). The
+initials, ordinal numbers and some common abbreviations from AACR2R
+[https://www.worldcat.org/title/847471922] (Appendix B) are kept.
+
 Testing
 -------
 
 For testing the package we use `pytest
-<http://pytest.org/latest/>`_. In order to run all tests, check out
-this repository and type:
+<http://pytest.org/latest/>`_. In order to run tests, check out
+the repository and type:
 
 .. code::
 
 	$ pytest
+
+By default, it runs all tests excluding validation test to do quick
+testing. The validation test was added for testing the removal of ISBD
+punctuation on two NLM's test record sets, with some punctuation
+removed and not removed, from
+[https://www.loc.gov/aba/pcc/documents/test-records-punctuation.html]. For
+all tests, do:
+
+.. code::
+
+	$ pytest --runall
+
 
 Acknowledgments
 ---------------
