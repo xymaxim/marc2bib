@@ -36,3 +36,12 @@ def rec_clusters(request):
     reader = MARCReader(open("tests/records/clusters.mrc", "rb"))
     request.addfinalizer(reader.close)
     return next(reader)
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--runall",
+        action="store_true",
+        default=False,
+        help="enable all tests including validation",
+    )
