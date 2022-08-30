@@ -233,6 +233,7 @@ def convert(
     tagfuncs: Optional[TagfunctionsSig] = None,
     include: Union[str, Iterable[str]] = "required",
     allow_blank: bool = False,
+    remove_punctuation: bool = True,
     indent: int = 1,
     do_align: bool = False,
 ) -> str:
@@ -270,6 +271,8 @@ def convert(
         allow_blank (bool): If True, also include tags with a blank
             content (empty or contains only whitespace characters)
             to the output. Defaults to False.
+        remove_punctuation (bool): If True, remove ending ISBD
+            punctuation. Defaults to True.
         indent (int): The tag line indentation. Defaults to 1.
         do_align: If True, align tag values by the longest tag.
             Defaults to False.
@@ -278,7 +281,9 @@ def convert(
         A BibTeX-formatted string.
 
     """
-    ctx_tags = map_tags(record, tagfuncs, include, allow_blank)
+    ctx_tags = map_tags(
+        record, tagfuncs, include, allow_blank, remove_punctuation
+    )
     bibtex = tags_to_bibtex(ctx_tags, bibtype, bibkey, indent, do_align)
 
     return bibtex
