@@ -28,8 +28,8 @@ class TestHookFunctions:
     def test_escape_special_characters(self):
         assert r"A \& B" == escape_special_characters_hook("", "A & B")
 
-    def test_use_hyphen_for_ranges_hook(self):
-        assert "12--34" == use_hyphen_for_ranges_hook("", "12-34")
+    def test_normalize_ranges_hook(self):
+        assert "12--34" == normalize_ranges_hook("", "12-34")
 
     def test_latexify_hook(self):
         assert r"A \& B, 12--34" == latexify_hook("", "A & B, 12-34")

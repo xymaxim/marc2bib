@@ -26,7 +26,7 @@ from . import tagfuncs as default_tagfuncs
 from .utils import (
     compose_hooks,
     escape_special_characters_hook,
-    use_hyphen_for_ranges_hook,
+    normalize_ranges_hook,
 )
 
 
@@ -87,14 +87,15 @@ def remove_isbd_punctuation(s: str) -> str:
 
 
 def latexify_hook(tag: str, value: str) -> str:
+    """Convert tag's value to make it suitable for LaTeX.
+
+    Currently, it escapes LaTeX special characters and normalizes
+    number ranges by replacing hyphens with en-dashes.
+    """
     latexify = compose_hooks(
-        [escape_special_characters_hook, use_hyphen_for_ranges_hook]
+        [escape_special_characters_hook, normalize_ranges_hook]
     )
     return latexify(tag, value)
-
-
-def _is_blank(string: str) -> bool:
-    return string.strip() == ""
 
 
 def _as_bibtex(
@@ -124,6 +125,7 @@ def map_tags(
     include: Union[str, Iterable[str]] = "required",
     allow_blank: bool = False,
     remove_punctuation: bool = True,
+    latexify: bool = True,
     post_hooks: Optional[list[PostHookSig]] = None,
     version: str = "bibtex",
 ) -> Dict[str, str]:
@@ -204,7 +206,7 @@ def map_tags(
             composed = compose_hooks(post_hooks)
             tag_value = composed(tag, tag_value)
 
-        blank_and_allowed = _is_blank(tag_value) and allow_blank
+        blank_and_allowed = tag_value.strip() == "" and allow_blank
         if tag_value.strip() or blank_and_allowed:
             # Abover all, we only accept non-blank field values and
             # empty values if they are allowed by the given argument.
@@ -249,6 +251,7 @@ def convert(
     include: Union[str, Iterable[str]] = "required",
     allow_blank: bool = False,
     remove_punctuation: bool = True,
+    latexify: bool = True,
     post_hooks: Optional[list[PostHookSig]] = None,
     indent: int = 1,
     do_align: bool = False,
@@ -289,6 +292,8 @@ def convert(
             to the output. Defaults to False.
         remove_punctuation (bool): If True, remove ending ISBD
             punctuation. Defaults to True.
+        latexify (bool): If True, convert tag's content for use with
+            LaTeX. Defaults to True.
         indent (int): The tag line indentation. Defaults to 1.
         do_align: If True, align tag values by the longest tag.
             Defaults to False.
@@ -298,7 +303,13 @@ def convert(
 
     """
     ctx_tags = map_tags(
-        record, tagfuncs, include, allow_blank, remove_punctuation, post_hooks
+        record,
+        tagfuncs,
+        include,
+        allow_blank,
+        remove_punctuation,
+        latexify,
+        post_hooks,
     )
     bibtex = tags_to_bibtex(ctx_tags, bibtype, bibkey, indent, do_align)
 

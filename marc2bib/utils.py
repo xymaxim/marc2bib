@@ -27,5 +27,5 @@ def escape_special_characters_hook(tag: str, value: str) -> str:
     return re.sub(rf"([&%#])", r"\\\1", value)
 
 
-def use_hyphen_for_ranges_hook(tag: str, value: str) -> str:
+def normalize_ranges_hook(tag: str, value: str) -> str:
     return re.sub(r"(\d+)-(\d+)", r"\1--\2", value)
