@@ -18,9 +18,12 @@ def test_nlm_record_set():
             # or editor fields (only field 710).
             if not record_removed.isbn() or cn in (
                 "603149",
+                "603172",
+                "603184",
                 "603235",
                 "603253",
                 "1627172",
+                "1607598",
             ):
                 continue
 

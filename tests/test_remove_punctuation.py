@@ -1,3 +1,4 @@
+import pytest
 from marc2bib import remove_isbd_punctuation
 
 
@@ -39,15 +40,18 @@ def test_ordinal_numbers():
     assert "3rd." == remove_isbd_punctuation("3rd.")
     assert "4th." == remove_isbd_punctuation("4th.")
 
-
+@pytest.mark.skipif()
 def test_strip_outer_square_brackets():
-    assert "Test" == remove_isbd_punctuation("[Test]", True)
-    assert "Test" == remove_isbd_punctuation("[Test].", True)
-    assert "One, [two]" == remove_isbd_punctuation("[One, [two]]", True)
+    assert "Test" == remove_isbd_punctuation("[Test]")
+    assert "Test" == remove_isbd_punctuation("[Test].")
+    assert "One, [two]" == remove_isbd_punctuation("[One, [two]]")
 
-
-def test_keep_outer_square_brackets():
-    assert "[Test]" == remove_isbd_punctuation("[Test]", False)
+@pytest.mark.skipif()
+def test_strip_outer_square_brackets():
+    assert "Test" == remove_isbd_punctuation("[Test]")
+    assert "Test" == remove_isbd_punctuation("[Test].")
+    assert "Test" == remove_isbd_punctuation("[Test] ;")
+    assert "Another [test]" == remove_isbd_punctuation("Another [test]")
 
 
 def test_common_abbreviation():
