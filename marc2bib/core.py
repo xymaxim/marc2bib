@@ -23,6 +23,12 @@ from typing import Callable, Dict, Iterable, Optional, Union
 from pymarc import MARCReader, Record  # type: ignore
 
 from . import tagfuncs as default_tagfuncs
+from .utils import (
+    compose_hooks,
+    escape_special_characters_hook,
+    use_hyphen_for_ranges_hook,
+)
+
 
 # By default, book entry may contain either one of author or editor
 # fields. See convert function to know how they are treated,
@@ -60,13 +66,10 @@ COMMON_ABBREVIATIONS = (
 # fmt: on
 
 
-def remove_isbd_punctuation(s: str, brackets: bool = False) -> str:
+def remove_isbd_punctuation(s: str) -> str:
     terminal_chars = ".,:;+=/"
 
     s = re.sub(rf"\s([{terminal_chars}])$", "", s)
-
-    if brackets:
-        s = re.sub(r"(^\[|\][^\]]?$)", "", s)
 
     ends_with_suffix = bool(re.search(r"[JS]r\.$", s))
     ends_with_initials = bool(re.search(r"[A-Z]\.$", s))
@@ -81,6 +84,13 @@ def remove_isbd_punctuation(s: str, brackets: bool = False) -> str:
     # fmt: on
 
     return s
+
+
+def latexify_hook(tag: str, value: str) -> str:
+    latexify = compose_hooks(
+        [escape_special_characters_hook, use_hyphen_for_ranges_hook]
+    )
+    return latexify(tag, value)
 
 
 def _is_blank(string: str) -> bool:
@@ -105,6 +115,7 @@ def _as_bibtex(
 
 
 TagfunctionsSig = Dict[str, Callable[[Record], str]]
+PostHookSig = Callable[[str, str], str]
 
 
 def map_tags(
@@ -113,6 +124,7 @@ def map_tags(
     include: Union[str, Iterable[str]] = "required",
     allow_blank: bool = False,
     remove_punctuation: bool = True,
+    post_hooks: Optional[list[PostHookSig]] = None,
     version: str = "bibtex",
 ) -> Dict[str, str]:
     """Map MARC fields of a record into the BibTeX tags.
@@ -185,15 +197,18 @@ def map_tags(
             warnings.warn(UserWarning(msg))
             tag_value = ""
 
+        if remove_punctuation:
+            tag_value = remove_isbd_punctuation(tag_value)
+
+        if post_hooks:
+            composed = compose_hooks(post_hooks)
+            tag_value = composed(tag, tag_value)
+
         blank_and_allowed = _is_blank(tag_value) and allow_blank
         if tag_value.strip() or blank_and_allowed:
-            # Here we only accept non-blank field values, empty values
-            # (if they are allowed by the given keyword argument), and also
-            # all required tags.
-            if remove_punctuation:
-                ctx_tags[tag] = remove_isbd_punctuation(tag_value)
-            else:
-                ctx_tags[tag] = tag_value
+            # Abover all, we only accept non-blank field values and
+            # empty values if they are allowed by the given argument.
+            ctx_tags[tag] = tag_value
 
     return ctx_tags
 
@@ -234,6 +249,7 @@ def convert(
     include: Union[str, Iterable[str]] = "required",
     allow_blank: bool = False,
     remove_punctuation: bool = True,
+    post_hooks: Optional[list[PostHookSig]] = None,
     indent: int = 1,
     do_align: bool = False,
 ) -> str:
@@ -282,7 +298,7 @@ def convert(
 
     """
     ctx_tags = map_tags(
-        record, tagfuncs, include, allow_blank, remove_punctuation
+        record, tagfuncs, include, allow_blank, remove_punctuation, post_hooks
     )
     bibtex = tags_to_bibtex(ctx_tags, bibtype, bibkey, indent, do_align)
 
