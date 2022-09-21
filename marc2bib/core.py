@@ -55,7 +55,7 @@ BOOK_OPT_TAGFUNCS = {
 }
 
 
-class Marc2bibError(Exception):
+class MARC2BibError(Exception):
     pass
 
 
@@ -178,7 +178,7 @@ def map_tags(
         editor = ctx_tagfuncs["editor"](record)
         if editor is None:
             msg = "both author and editor (required) tags are treated empty."
-            raise Marc2bibError(msg)
+            raise MARC2BibError(msg)
         else:
             ctx_tagfuncs.pop("author")
 
