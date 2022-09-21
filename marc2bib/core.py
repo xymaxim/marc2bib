@@ -66,24 +66,24 @@ COMMON_ABBREVIATIONS = (
 # fmt: on
 
 
-def remove_isbd_punctuation(s: str) -> str:
+def remove_isbd_punctuation_hook(tag: str, value: str) -> str:
     terminal_chars = ".,:;+=/"
 
-    s = re.sub(rf"\s([{terminal_chars}])$", "", s)
+    value = re.sub(rf"\s([{terminal_chars}])$", "", value)
 
-    ends_with_suffix = bool(re.search(r"[JS]r\.$", s))
-    ends_with_initials = bool(re.search(r"[A-Z]\.$", s))
-    ends_with_ordinal = bool(re.search(r"\d(st|nd|rd|th)\.$", s))
-    ends_with_ellipsis = bool(re.search(r"\w\.{3}$", s))
-    ends_with_abbrev = s.lower().endswith(COMMON_ABBREVIATIONS)
+    ends_with_suffix = bool(re.search(r"[JS]r\.$", value))
+    ends_with_initials = bool(re.search(r"[A-Z]\.$", value))
+    ends_with_ordinal = bool(re.search(r"\d(st|nd|rd|th)\.$", value))
+    ends_with_ellipsis = bool(re.search(r"\w\.{3}$", value))
+    ends_with_abbrev = value.lower().endswith(COMMON_ABBREVIATIONS)
 
     # fmt: off
     if not (ends_with_suffix or ends_with_initials or ends_with_ordinal or
             ends_with_ellipsis or ends_with_abbrev):
-        s = re.sub(fr"[{terminal_chars}]$", "", s)
+        value = re.sub(fr"[{terminal_chars}]$", "", value)
     # fmt: on
 
-    return s
+    return value
 
 
 def latexify_hook(tag: str, value: str) -> str:
@@ -200,7 +200,7 @@ def map_tags(
             tag_value = ""
 
         if remove_punctuation:
-            tag_value = remove_isbd_punctuation(tag_value)
+            tag_value = remove_isbd_punctuation_hook(tag, tag_value)
 
         if latexify:
             tag_value = latexify_hook(tag, tag_value)
