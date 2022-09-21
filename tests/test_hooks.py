@@ -54,3 +54,8 @@ class TestHooksOnRecords:
 
         output = convert(rec_tsing, post_hooks=[hook1, hook2])
         assert "title = {{The mushroom at the end of the world.}}" in output
+
+    def test_default_latexify_post_hook(self, rec_tsing):
+        tagfuncs = {"test": lambda x: "12-23"}
+        output = convert(rec_tsing, tagfuncs=tagfuncs)
+        assert "test = {12--23}" in output

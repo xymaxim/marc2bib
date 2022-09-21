@@ -202,6 +202,9 @@ def map_tags(
         if remove_punctuation:
             tag_value = remove_isbd_punctuation(tag_value)
 
+        if latexify:
+            tag_value = latexify_hook(tag, tag_value)
+
         if post_hooks:
             composed = compose_hooks(post_hooks)
             tag_value = composed(tag, tag_value)
