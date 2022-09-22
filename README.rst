@@ -151,7 +151,7 @@ via the corresponding arguments (in parentheses) of ``convert`` and ``map_tags``
 
 * ``marc2bib.core.remove_isbd_punctuation_hook``
   (``remove_punctuation``, default: True) — remove terminal periods
-  and separating punctuation correspinding to MARC 21 format (see the
+  and separating punctuation corresponding to MARC 21 format (see the
   below section for details);
   
 * ``marc2bib.core.latexify_hook`` (``latexify``, default: True) —
