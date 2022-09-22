@@ -135,6 +135,7 @@ the presented order.
 The hook's function may look as follows:
 
 .. code:: python
+	  
 	  def hook(tag: str, value: str) -> str:
 	      return do_something(value)
 	      
@@ -164,6 +165,7 @@ User-defined hooks
 After default hooks, the user-defined ones are executed. The ``post_hooks`` argument accepts a list of these hooks:
 
 .. code:: python
+	  
 	  convert(record, post_hooks=[hook1, hook2])
 
 Removal of ISBD punctuation
