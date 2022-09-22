@@ -147,7 +147,7 @@ Default post-hooks
 ******************
 
 The default hooks include two hooks which execution can be controlled
-with the corresponding arguments (in parentheses) of ``convert`` and ``map_tags`` functions:
+via the corresponding arguments (in parentheses) of ``convert`` and ``map_tags`` functions:
 
 * ``marc2bib.core.remove_isbd_punctuation_hook``
   (``remove_punctuation``, default: True) — remove terminal periods
@@ -207,5 +207,4 @@ Acknowledgments
 ---------------
 
 Thanks go to all the authors and contributors of the `pymarc
-<https://gitlab.com/pymarc/pymarc>`_ package.  This project would not
-have been possible without their work.
+<https://gitlab.com/pymarc/pymarc>`_ package.
