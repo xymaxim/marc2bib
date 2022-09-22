@@ -125,6 +125,47 @@ function and the choice depends on your needs:
 	     
 	  convert(record, bibkey=new_bibkey, indent=4)
 
+Default and user-defined post-hooks
+-----------------------------------
+
+Post-hooks run at the end of translation of MARC 21 fields to BibTeX
+tags. There are *default* and *user-defined* post-hooks which execute in
+the presented order.
+
+The hook's function may look as follows:
+
+.. code:: python
+	  def hook(tag: str, value: str) -> str:
+	      return do_something(value)
+	      
+Every hook will be called with two arguments: the tag currently
+processing and its value. If the provided hook's function returns
+``None``, a ``ValueError`` is raised at an outer level.
+
+Default post-hooks
+******************
+
+The default hooks include two hooks which execution can be controlled
+with the corresponding arguments (in parentheses) of ``convert`` and ``map_tags`` functions:
+
+* ``marc2bib.core.remove_isbd_punctuation_hook``
+  (``remove_punctuation``, default: True) — remove terminal periods
+  and separating punctuation correspinding to MARC 21 format (see the
+  below section for details);
+  
+* ``marc2bib.core.latexify_hook`` (``latexify``, default: True) —
+  convert tag value to make it suitable for LaTeX. Currently, it
+  escapes LaTeX special characters and normalizes number ranges by
+  replacing hyphens with en-dashes.
+
+User-defined hooks
+******************
+
+After default hooks, the user-defined ones are executed. The ``post_hooks`` argument accepts a list of these hooks:
+
+.. code:: python
+	  convert(record, post_hooks=[hook1, hook2])
+
 Removal of ISBD punctuation
 ---------------------------
 
