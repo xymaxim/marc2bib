@@ -211,7 +211,7 @@ def map_tags(
 
         blank_and_allowed = tag_value.strip() == "" and allow_blank
         if tag_value.strip() or blank_and_allowed:
-            # Abover all, we only accept non-blank field values and
+            # Above all, we only accept non-blank field values and
             # empty values if they are allowed by the given argument.
             ctx_tags[tag] = tag_value
 
