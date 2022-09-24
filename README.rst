@@ -140,14 +140,14 @@ The hook's function may look as follows:
 	      return do_something(value)
 	      
 Every hook will be called with two arguments: the tag currently
-processing and its value. If the provided hook's function returns
-``None``, a ``ValueError`` is raised at an outer level.
+processing and its value.
 
 Default post-hooks
 ******************
 
 The default hooks include two hooks which execution can be controlled
-via the corresponding arguments (in parentheses) of ``convert`` and ``map_tags`` functions:
+via the corresponding arguments (in parentheses) of ``convert`` and
+``map_tags`` functions:
 
 * ``marc2bib.core.remove_isbd_punctuation_hook``
   (``remove_punctuation``, default: True) — remove terminal periods
@@ -162,7 +162,8 @@ via the corresponding arguments (in parentheses) of ``convert`` and ``map_tags``
 User-defined hooks
 ******************
 
-After default hooks, the user-defined ones are executed. The ``post_hooks`` argument accepts a list of these hooks:
+After default hooks, the user-defined ones are executed. The
+``post_hooks`` argument accepts a list of these hooks:
 
 .. code:: python
 	  
@@ -206,5 +207,5 @@ all tests, do:
 Acknowledgments
 ---------------
 
-Thanks go to all the authors and contributors of the `pymarc
+Thanks go to all the authors and contributors of `pymarc
 <https://gitlab.com/pymarc/pymarc>`_ package.

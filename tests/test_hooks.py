@@ -11,15 +11,14 @@ def test_compose_hooks():
 
 
 def test_compose_hooks_with_null_hook():
-    append = lambda _, x: x + x
-    null = lambda _, x: None
-    assert "aa" == compose_hooks([append, null])("", "a")
+    with pytest.raises(TypeError):
+        compose_hooks([lambda x, y: None ])("tag", "value")
 
-
-def test_compose_hooks_should_raise_value_error():
+        
+def test_compose_hooks_with_non_callable_hook():
     with pytest.raises(ValueError):
-        compose_hooks([None])("", "")
-
+        compose_hooks([None])("tag", "value")
+    
 
 class TestHookFunctions:
     def test_enclose_in_curly_braces_hook(self):
@@ -38,8 +37,7 @@ class TestHookFunctions:
 class TestHooksOnRecords:
     def test_conditional_post_hook(self, rec_tsing):
         def hook(tag, value):
-            if tag == "title":
-                return f"{{{value}}}"
+            return f"{{{value}}}" if tag == "title" else value
 
         output = convert(rec_tsing, post_hooks=[hook])
         assert "title = {{The mushroom at the end of the world}}" in output
