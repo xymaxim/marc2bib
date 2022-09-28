@@ -28,8 +28,8 @@ def strip_outer_square_brackets_hook(tag: str, value: str) -> str:
     return re.sub(rf"^\[(.*)\]\s?[{terminal_chars}]?$", r"\1", value)
 
 
-def enclose_in_curly_braces_hook(tag: str, value: str) -> str:
-    return f"{{{value}}}"
+def protect_uppercase_letters_hook(tag: str, value: str) -> str:
+    return re.sub(r"([A-Z]{1,})", r"{\1}", value)
 
 
 def escape_special_characters_hook(tag: str, value: str) -> str:

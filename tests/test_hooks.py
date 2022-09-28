@@ -21,8 +21,8 @@ def test_compose_hooks_with_non_callable_hook():
     
 
 class TestHookFunctions:
-    def test_enclose_in_curly_braces_hook(self):
-        assert "{Test}" == enclose_in_curly_braces_hook("", "Test")
+    def test_protect_uppercase_letters_hook(self):
+        assert "{A}b {AB}" == protect_uppercase_letters_hook("", "Ab AB")
 
     def test_escape_special_characters(self):
         assert r"A \& B" == escape_special_characters_hook("", "A & B")
