@@ -7,7 +7,7 @@ from marc2bib.utils import *
 def test_compose_hooks():
     append = lambda _, x: x + x
     multiply = lambda _, x: x * 2
-    assert "aaaa" == compose_hooks([append, multiply])("", "a")
+    assert "aaaa" == compose_hooks([append, multiply])("tag", "a")
 
 
 def test_compose_hooks_with_null_hook():
@@ -22,16 +22,16 @@ def test_compose_hooks_with_non_callable_hook():
 
 class TestHookFunctions:
     def test_protect_uppercase_letters_hook(self):
-        assert "{A}b {AB}" == protect_uppercase_letters_hook("", "Ab AB")
+        assert "{A}b {AB}" == protect_uppercase_letters_hook("tag", "Ab AB")
 
     def test_escape_special_characters(self):
-        assert r"A \& B" == escape_special_characters_hook("", "A & B")
+        assert r"A \& B" == escape_special_characters_hook("tag", "A & B")
 
     def test_normalize_ranges_hook(self):
-        assert "12--34" == normalize_ranges_hook("", "12-34")
+        assert "12--34" == normalize_ranges_hook("tag", "12-34")
 
     def test_latexify_hook(self):
-        assert r"A \& B, 12--34" == latexify_hook("", "A & B, 12-34")
+        assert r"A \& B, 12--34" == latexify_hook("tag", "A & B, 12-34")
 
 
 class TestHooksOnRecords:
