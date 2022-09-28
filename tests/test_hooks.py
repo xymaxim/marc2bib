@@ -1,7 +1,6 @@
 import pytest
 from marc2bib import convert
-from marc2bib.core import latexify_hook
-from marc2bib.utils import *
+from marc2bib.hooks import *
 
 
 def test_compose_hooks():
@@ -12,13 +11,13 @@ def test_compose_hooks():
 
 def test_compose_hooks_with_null_hook():
     with pytest.raises(TypeError):
-        compose_hooks([lambda x, y: None ])("tag", "value")
+        compose_hooks([lambda x, y: None])("tag", "value")
 
-        
+
 def test_compose_hooks_with_non_callable_hook():
     with pytest.raises(ValueError):
         compose_hooks([None])("tag", "value")
-    
+
 
 class TestHookFunctions:
     def test_protect_uppercase_letters_hook(self):

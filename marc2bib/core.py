@@ -23,11 +23,7 @@ from typing import Callable, Dict, Iterable, Optional, Union
 from pymarc import MARCReader, Record  # type: ignore
 
 from . import tagfuncs as default_tagfuncs
-from .utils import (
-    compose_hooks,
-    escape_special_characters_hook,
-    normalize_ranges_hook,
-)
+from .hooks import compose_hooks, remove_isbd_punctuation_hook, latexify_hook
 
 
 # By default, book entry may contain either one of author or editor
@@ -64,38 +60,6 @@ COMMON_ABBREVIATIONS = (
     "co.", "ed.", "eds.", "et al.", "v.", "vol.", "vols.", "inc.", "p.",
 )
 # fmt: on
-
-
-def remove_isbd_punctuation_hook(tag: str, value: str) -> str:
-    terminal_chars = ".,:;+=/"
-
-    value = re.sub(rf"\s([{terminal_chars}])$", "", value)
-
-    ends_with_suffix = bool(re.search(r"[JS]r\.$", value))
-    ends_with_initials = bool(re.search(r"[A-Z]\.$", value))
-    ends_with_ordinal = bool(re.search(r"\d(st|nd|rd|th)\.$", value))
-    ends_with_ellipsis = bool(re.search(r"\w\.{3}$", value))
-    ends_with_abbrev = value.lower().endswith(COMMON_ABBREVIATIONS)
-
-    # fmt: off
-    if not (ends_with_suffix or ends_with_initials or ends_with_ordinal or
-            ends_with_ellipsis or ends_with_abbrev):
-        value = re.sub(fr"[{terminal_chars}]$", "", value)
-    # fmt: on
-
-    return value
-
-
-def latexify_hook(tag: str, value: str) -> str:
-    """Convert tag's value to make it suitable for LaTeX.
-
-    Currently, it escapes LaTeX special characters and normalizes
-    number ranges by replacing hyphens with en-dashes.
-    """
-    latexify = compose_hooks(
-        [escape_special_characters_hook, normalize_ranges_hook]
-    )
-    return latexify(tag, value)
 
 
 def _as_bibtex(
