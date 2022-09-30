@@ -128,7 +128,7 @@ A note: if you use tag-functions, no need to specify these tags for
 including separately.
 
 Default, user-defined, and pre-defined post-hooks
------------------------------------
+-------------------------------------------------
 
 Post-hooks run at the end of translation of MARC 21 fields to BibTeX
 tags. There are *default* and *user-defined* post-hooks which execute in
@@ -174,8 +174,8 @@ After default hooks, the user-defined ones are executed. The
 Pre-defined hooks
 ^^^^^^^^^^^^^^^^^
 
-In addition to the default hooks, the *pre-defined* hooks for common
-cases are supplied with the package:
+In addition to the default hooks, the *pre-defined* hooks for some
+common cases are supplied with the package:
 
 * ``marc2bib.hooks.strip_outer_square_brackets_hook`` — remove square
   brackets used to mark the additions made by cataloger;
