@@ -145,7 +145,7 @@ Every hook will be called with two arguments: the tag currently
 processing and its value.
 
 Default post-hooks
-==================
+^^^^^^^^^^^^^^^^^^
 
 The default hooks include two hooks which execution can be controlled
 via the corresponding arguments (in parentheses) of ``convert`` and
@@ -162,7 +162,7 @@ via the corresponding arguments (in parentheses) of ``convert`` and
   replacing hyphens with en-dashes.
 
 User-defined hooks
-==================
+^^^^^^^^^^^^^^^^^^
 
 After default hooks, the user-defined ones are executed. The
 ``post_hooks`` argument accepts a list of these hooks:
