@@ -112,8 +112,8 @@ optional tags. The user can extend or override them easily:
 	      
 	  convert(record, tagfuncs={"title": title_title}) 
 
-Customizing returned tags
--------------------------
+Customize returning tags
+------------------------
 
 The returned tags can be either all (required and optional), only
 required (default), or required with user-provided ones (``include``
@@ -121,7 +121,7 @@ argument):
 
 .. code:: python
 
-	  # Return required tags and "pages"
+	  # Return required tags and "pages".
 	  convert(record, include=["pages"]) # or "all", "required" 
 
 A note: if you use tag-functions, no need to specify these tags for
