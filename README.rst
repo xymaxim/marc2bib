@@ -59,7 +59,7 @@ steps: (1) mapping MARC fields to BiBTex tags, ``map_tags(...)``,
 and (2) converting the tags to BibTeX string,
 ``tags_to_bibtex(...)``. However, instead of converting MARC data to
 BibTeX string in one call, you can first map it to a dictionary of
-BibTeX tags (step 1) for inspection or post-processing:
+BibTeX tags, for example, for inspection or post-processing (step 1):
 
 .. code:: python
 
