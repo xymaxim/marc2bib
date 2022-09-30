@@ -127,7 +127,7 @@ argument):
 A note: if you use tag-functions, no need to specify these tags for
 including separately.
 
-Default and user-defined post-hooks
+Default, user-defined, and pre-defined post-hooks
 -----------------------------------
 
 Post-hooks run at the end of translation of MARC 21 fields to BibTeX
@@ -181,7 +181,7 @@ cases are supplied with the package:
   brackets used to mark the additions made by cataloger;
   
 * ``marc2bib.hooks.protect_uppercase_letters_hook`` — enclose
-  uppercase letters in curly braces to protect the case from chnages.
+  uppercase letters in curly braces to protect the case from changes.
 
 
 Removal of ISBD punctuation
