@@ -55,11 +55,11 @@ Convert to BibTeX or just map tags
 ----------------------------------
 
 The main function of this package is ``convert(...)``. It combines two
-steps: (1) mapping MARC fields to BiBTex tags, ``map-tags(...)``,
+steps: (1) mapping MARC fields to BiBTex tags, ``map_tags(...)``,
 and (2) converting the tags to BibTeX string,
 ``tags_to_bibtex(...)``. However, instead of converting MARC data to
 BibTeX string in one call, you can first map it to a dictionary of
-BibTeX tags (fields) for inspection or post-processing (step 1):
+BibTeX tags (step 1) for inspection or post-processing:
 
 .. code:: python
 
