@@ -48,46 +48,16 @@ data from a MARC file and convert it to a BibTeX entry:
 
 And that is it!
 	  
-More examples
--------------
-
-Tag-functions
-*************
-
-To parse a value of BibTeX tags (fields), we use so-called
-tag-functions. Currently ``marc2bib`` fully supports book BibTeX
-entries—the tag-functions are defined for the related required
-and optional tags. The user can extend or override them easily:
-
-.. code:: python
-
-	  from marc2bib import BOOK_REQ_TAGFUNCS
-
-	  def title_title(record):
-	      return BOOKS_REQ_TAGFUNCS["title"](record).title()
-	      
-	  convert(record, tagfuncs={"title": title_title}) 
-
-Customizing return
-******************
-
-The returned tags can be either all (required and optional),
-only required (default), or required with user-defined ones:
-
-.. code:: python
-
-	  # Return required tags and "pages"
-	  convert(record, include=["pages"]) # or 'all', 'required' 
-
-A note: if you use tag-functions, no need to specify these tags for
-including separately.
+Usage
+-----
 
 Convert to BibTeX or just map tags
 **********************************
 
 The main function of this package is ``convert(...)``. It combines two
-steps: (1) mapping MARC fields to BiBTex tags and (2) converting the
-tags to BibTeX string. However, instead of converting MARC data to
+steps: (1) mapping MARC fields to BiBTex tags (``map-tags(...)``)
+and (2) converting the tags to BibTeX string
+``tags_to_bibtex(...)``. However, instead of converting MARC data to
 BibTeX string in one call, you can first map it to a dictionary of
 BibTeX tags (fields) for inspection or post-processing (step 1):
 
@@ -125,8 +95,40 @@ function and the choice depends on your needs:
 	     
 	  convert(record, bibkey=new_bibkey, indent=4)
 
+Tag-functions
+*************
+
+To parse a value of BibTeX tags (fields), we use so-called
+*tag-functions*. Currently ``marc2bib`` fully supports book BibTeX
+entries—the tag-functions are defined for the related required and
+optional tags. The user can extend or override them easily:
+
+.. code:: python
+
+	  from marc2bib import BOOK_REQ_TAGFUNCS
+
+	  def title_title(record):
+	      return BOOKS_REQ_TAGFUNCS["title"](record).title()
+	      
+	  convert(record, tagfuncs={"title": title_title}) 
+
+Customizing returned tags
+*************************
+
+The returned tags can be either all (required and optional), only
+required (default), or required with user-provided ones (``include``
+argument):
+
+.. code:: python
+
+	  # Return required tags and "pages"
+	  convert(record, include=["pages"]) # or "all", "required" 
+
+A note: if you use tag-functions, no need to specify these tags for
+including separately.
+
 Default and user-defined post-hooks
------------------------------------
+***********************************
 
 Post-hooks run at the end of translation of MARC 21 fields to BibTeX
 tags. There are *default* and *user-defined* post-hooks which execute in
@@ -143,7 +145,7 @@ Every hook will be called with two arguments: the tag currently
 processing and its value.
 
 Default post-hooks
-******************
+==================
 
 The default hooks include two hooks which execution can be controlled
 via the corresponding arguments (in parentheses) of ``convert`` and
@@ -160,7 +162,7 @@ via the corresponding arguments (in parentheses) of ``convert`` and
   replacing hyphens with en-dashes.
 
 User-defined hooks
-******************
+==================
 
 After default hooks, the user-defined ones are executed. The
 ``post_hooks`` argument accepts a list of these hooks:
@@ -170,7 +172,7 @@ After default hooks, the user-defined ones are executed. The
 	  convert(record, post_hooks=[hook1, hook2])
 
 Removal of ISBD punctuation
----------------------------
+***************************
 
 In the MARC 21 format, the fields and subfields historically may
 contain and be separated by terminal periods and various punctuation
