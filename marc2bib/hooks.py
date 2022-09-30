@@ -23,6 +23,9 @@ def compose_hooks(hooks: Optional[list[Callable]]) -> Callable:
     return inner
 
 
+# Default hooks
+
+
 def remove_isbd_punctuation_hook(tag: str, value: str) -> str:
     from .core import COMMON_ABBREVIATIONS
 
@@ -63,6 +66,9 @@ def escape_special_characters_hook(tag: str, value: str) -> str:
 
 def normalize_ranges_hook(tag: str, value: str) -> str:
     return re.sub(r"(\d+)-(\d+)", r"\1--\2", value)
+
+
+# Pre-defined hooks
 
 
 def strip_outer_square_brackets_hook(tag: str, value: str) -> str:
