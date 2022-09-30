@@ -24,7 +24,7 @@ Or for development:
 	$ pip install -e marc2bib
 
 Quickstart
-----------
+==========
 
 The package works along with `pymarc
 <https://gitlab.com/pymarc/pymarc>`_ utilized to read MARC files. If
@@ -172,7 +172,7 @@ After default hooks, the user-defined ones are executed. The
 	  convert(record, post_hooks=[hook1, hook2])
 
 Removal of ISBD punctuation
-***************************
+---------------------------
 
 In the MARC 21 format, the fields and subfields historically may
 contain and be separated by terminal periods and various punctuation
@@ -184,7 +184,7 @@ initials, ordinal numbers and some common abbreviations from AACR2R
 [https://www.worldcat.org/title/847471922] (Appendix B) are kept.
 
 Testing
--------
+=======
 
 For testing the package we use `pytest
 <http://pytest.org/latest/>`_. In order to run tests, check out
@@ -207,7 +207,7 @@ all tests, do:
 
 
 Acknowledgments
----------------
+===============
 
 Thanks go to all the authors and contributors of `pymarc
 <https://gitlab.com/pymarc/pymarc>`_ package.
