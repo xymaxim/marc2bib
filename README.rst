@@ -171,6 +171,19 @@ After default hooks, the user-defined ones are executed. The
 	  
 	  convert(record, post_hooks=[hook1, hook2])
 
+Pre-defined hooks
+^^^^^^^^^^^^^^^^^
+
+In addition to the default hooks, the *pre-defined* hooks for common
+cases are supplied with the package:
+
+* ``marc2bib.hooks.strip_outer_square_brackets_hook`` — remove square
+  brackets used to mark the additions made by cataloger;
+  
+* ``marc2bib.hooks.protect_uppercase_letters_hook`` — enclose
+  uppercase letters in curly braces to protect the case from chnages.
+
+
 Removal of ISBD punctuation
 ---------------------------
 
