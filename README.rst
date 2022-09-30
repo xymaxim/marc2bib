@@ -1,5 +1,5 @@
 marc2bib :book:
-===============
+***************
 
 .. image:: https://img.shields.io/pypi/v/marc2bib.svg
 	:target: https://pypi.python.org/pypi/marc2bib
@@ -8,7 +8,7 @@ marc2bib is a Python package that allows to convert bibliographic
 records from MARC 21 format to BibTeX entries.
 
 Installation
-------------
+============
 
 marc2bib is available on PyPI:
 
@@ -49,10 +49,10 @@ data from a MARC file and convert it to a BibTeX entry:
 And that is it!
 	  
 Usage
------
+=====
 
 Convert to BibTeX or just map tags
-**********************************
+----------------------------------
 
 The main function of this package is ``convert(...)``. It combines two
 steps: (1) mapping MARC fields to BiBTex tags (``map-tags(...)``)
@@ -96,7 +96,7 @@ function and the choice depends on your needs:
 	  convert(record, bibkey=new_bibkey, indent=4)
 
 Tag-functions
-*************
+-------------
 
 To parse a value of BibTeX tags (fields), we use so-called
 *tag-functions*. Currently ``marc2bib`` fully supports book BibTeX
@@ -113,7 +113,7 @@ optional tags. The user can extend or override them easily:
 	  convert(record, tagfuncs={"title": title_title}) 
 
 Customizing returned tags
-*************************
+-------------------------
 
 The returned tags can be either all (required and optional), only
 required (default), or required with user-provided ones (``include``
@@ -128,7 +128,7 @@ A note: if you use tag-functions, no need to specify these tags for
 including separately.
 
 Default and user-defined post-hooks
-***********************************
+-----------------------------------
 
 Post-hooks run at the end of translation of MARC 21 fields to BibTeX
 tags. There are *default* and *user-defined* post-hooks which execute in
