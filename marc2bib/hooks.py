@@ -7,7 +7,6 @@ def compose_hooks(hooks: Optional[list[Callable]]) -> Callable:
         for hook in hooks:
             if isinstance(hook, Callable):
                 new_value = hook(tag, value)
-                print(new_value, "x")
                 if isinstance(new_value, str):
                     value = new_value
                 else:
@@ -23,12 +22,22 @@ def compose_hooks(hooks: Optional[list[Callable]]) -> Callable:
     return inner
 
 
+def apply_hook_not_for_tags(hook, tags: list[str]):
+    def new_conditional_hook(tag: str, value: str) -> str:
+        if tag in tags:
+            return value
+        else:
+            return hook(tag, value)
+
+    return new_conditional_hook
+
+
 # Default hooks
 
 
-def remove_isbd_punctuation_hook(tag: str, value: str) -> str:
-    from .core import COMMON_ABBREVIATIONS
-
+def remove_isbd_punctuation_hook(
+    tag: str, value: str, *, abbreviations: Optional[str] = None
+) -> str:
     terminal_chars = ".,:;+=/"
 
     value = re.sub(rf"\s([{terminal_chars}])$", "", value)
@@ -37,7 +46,11 @@ def remove_isbd_punctuation_hook(tag: str, value: str) -> str:
     ends_with_initials = bool(re.search(r"[A-Z]\.$", value))
     ends_with_ordinal = bool(re.search(r"\d(st|nd|rd|th)\.$", value))
     ends_with_ellipsis = bool(re.search(r"\w\.{3}$", value))
-    ends_with_abbrev = value.lower().endswith(COMMON_ABBREVIATIONS)
+
+    from .core import COMMON_ABBREVIATIONS
+
+    abbreviations = abbreviations or COMMON_ABBREVIATIONS
+    ends_with_abbrev = value.lower().endswith(abbreviations)
 
     # fmt: off
     if not (ends_with_suffix or ends_with_initials or ends_with_ordinal or
