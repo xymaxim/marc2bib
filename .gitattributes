@@ -1,0 +1,2 @@
+tests/records/*.mrc linguist-vendored
+tests/validation/*.mrc linguist-vendored
