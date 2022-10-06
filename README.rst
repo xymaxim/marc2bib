@@ -54,10 +54,10 @@ Overview
 Convert to BibTeX or just map tags
 ----------------------------------
 
-The main function of this package is ``convert(...)``. It combines two
-steps: (1) mapping MARC fields to BiBTex tags, ``map_tags(...)``,
+The main function of this package is ``convert()``. It combines two
+steps: (1) mapping MARC fields to BiBTex tags, ``map_tags()``,
 and (2) converting the tags to BibTeX string,
-``tags_to_bibtex(...)``. However, instead of converting MARC data to
+``tags_to_bibtex()``. However, instead of converting MARC data to
 BibTeX string in one call, you can first map it to a dictionary of
 BibTeX tags, for example, for inspection or post-processing (step 1):
 
@@ -84,7 +84,7 @@ Then, you can convert these mapped tags to a BibTeX string (step 2):
               . . .
           }
 
-Of course, the example below can be coded with ``convert(...)``
+Of course, the example below can be coded with ``convert()``
 function and the choice depends on your needs:
 
 .. code:: python
@@ -225,17 +225,38 @@ all tests, do:
 Cookbook
 ========
 
+Applying hooks not for all tags
+-------------------------------
+
+Sometimes you will need to apply a hook not for all tags. With
+``apply_not_for_tags()`` it is possible to make an existing hook
+tag-conditional.
+
+Let us illustrate it with the following example. Suppose a title of a
+bibliographic work ends with a dot and you need to keep it. To do it,
+we can turn off the default hook (``remove_isbd_punctuation_hook``)
+and instead make it applying later for all tags except *title* tag:
+
+.. code::
+
+        from marc2bib.hooks import apply_not_for_tags
+        from marc2bib.hooks import remove_isbd_punctuation_hook
+
+	hooks = [apply_not_for_tags(remove_isbd_punctuation_hook, ["title"])]
+        convert(record, remove_punctuation=False, post_hooks=hooks)  
+
+	
 Passing arguments to hooks
 --------------------------
 
 It is possible to customize hooks by adding keywords arguments to a
 hook's function and passing them later with
-``functools.partial()``. Suppose a title of a book ends with an
-abbreviation and you need to keep an ending period. Here is an
-example of customizing ``remove_isbd_punctuation_hook(tag, value, *,
+``functools.partial()``. Suppose a title of a bibliographic work ends
+with an abbreviation and you need to keep a period. Here is an example
+of customizing ``remove_isbd_punctuation_hook(tag, value, *,
 abbreviations)`` hook by providing an extended list of abbreviations:
 
-.. code::
+.. code:: python
 
         from functools import partial
 
