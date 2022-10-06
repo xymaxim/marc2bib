@@ -272,7 +272,7 @@ abbreviations)`` hook by providing an extended list of abbreviations:
 	
         convert(record, remove_punctuation=False, post_hooks=[remove_punctuation_call])
 
-As an alternative—especially when working interactively—you can just modify the corresponding value of a translated tag:
+As an alternative, especially when working interactively, you can just modify the corresponding value of a translated tag:
 
 .. code:: python
 	  
