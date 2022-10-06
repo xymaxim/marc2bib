@@ -1,4 +1,5 @@
 import pytest
+
 from marc2bib import convert
 from marc2bib.hooks import *
 
@@ -19,8 +20,8 @@ def test_compose_hooks_with_non_callable_hook():
         compose_hooks([None])("tag", "value")
 
 
-def test_apply_hook_not_for_tags():
-    hook = apply_hook_not_for_tags(lambda t, v: "Not test", ["test"])
+def test_apply_not_for_tags():
+    hook = apply_not_for_tags(lambda t, v: "Not test", ["test"])
     assert "Not test" == hook("tag", "Test")
     assert "Test" == hook("test", "Test")
 

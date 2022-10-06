@@ -23,7 +23,7 @@ def compose_hooks(hooks: Optional[list[Callable]]) -> Callable:
     return inner
 
 
-def apply_hook_not_for_tags(hook, tags: list[str]):
+def apply_not_for_tags(hook, tags: list[str]) -> Callable:
     def new_conditional_hook(tag: str, value: str) -> str:
         if tag in tags:
             return value
