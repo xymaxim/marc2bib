@@ -225,26 +225,6 @@ all tests, do:
 Cookbook
 ========
 
-Applying hooks not for all tags
--------------------------------
-
-Sometimes you will need to apply a hook not for all tags. With
-``apply_not_for_tags(...)`` it is possible to make an existing hook
-tag-conditional.
-
-Let us illustrate it with the following example. Suppose a title of a
-bibliographic work ends with a dot and you need to keep it. To do it,
-we can turn off the default hook (``remove_isbd_punctuation_hook``)
-and instead make it applying later for all tags except *title* tag:
-
-.. code::
-
-        from marc2bib.hooks import apply_not_for_tags
-        from marc2bib.hooks import remove_isbd_punctuation_hook
-
-	hooks = [apply_not_for_tags(remove_isbd_punctuation_hook, ["title"])]
-        convert(record, remove_punctuation=False, post_hooks=hooks)  
-
 Passing arguments to hooks
 --------------------------
 
