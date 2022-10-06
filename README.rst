@@ -239,7 +239,7 @@ bibliographic work ends with a dot and you need to keep it. To do it,
 we can turn off the default hook (``remove_isbd_punctuation_hook``)
 and instead make it applying later for all tags except *title* tag:
 
-.. code::
+.. code:: python
 
         from marc2bib.hooks import apply_not_for_tags
 
