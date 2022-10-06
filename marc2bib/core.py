@@ -26,12 +26,8 @@ from . import tagfuncs as default_tagfuncs
 from .hooks import compose_hooks, remove_isbd_punctuation_hook, latexify_hook
 
 
-# By default, book entry may contain either one of author or editor
-# fields. See convert function to know how they are treated,
-# especially in case if both fields are requested.
 BOOK_REQ_TAGFUNCS = {
     "author": default_tagfuncs.get_author,
-    "editor": default_tagfuncs.get_editor,
     "publisher": default_tagfuncs.get_publisher,
     "title": default_tagfuncs.get_title,
     "year": default_tagfuncs.get_year,
@@ -39,6 +35,7 @@ BOOK_REQ_TAGFUNCS = {
 
 BOOK_OPT_TAGFUNCS = {
     "address": default_tagfuncs.get_address,
+    "editor": default_tagfuncs.get_editor,
     "edition": default_tagfuncs.get_edition,
     "volume": default_tagfuncs.get_volume,
     "volumes": default_tagfuncs.get_volumes,
@@ -95,7 +92,7 @@ def map_tags(
 ) -> Dict[str, str]:
     """Map MARC fields of a record into the BibTeX tags.
 
-    See docstring of :obj:`marc2bib.convert()` for the arguments.
+    See docstring of :obj:`marc2bib.core.convert()` for the arguments.
     """
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
     if version == "biblatex":
@@ -132,19 +129,24 @@ def map_tags(
 
     ctx_tags = {}
 
-    # Check for author field first, then editor.
+    # Check for author tag first, then editor.
     author = ctx_tagfuncs["author"](record)
-    if author:
-        # Editor field can be requested along with author.
-        if "editor" not in include or "editor" not in tagfuncs:
-            ctx_tagfuncs.pop("editor")
-    else:
-        editor = ctx_tagfuncs["editor"](record)
-        if editor is None:
+    if not author:
+        # If so, remove the author tag-function from the context and
+        # try to get editor using user-provided or default tag-function.
+        ctx_tagfuncs.pop("author")
+
+        try:
+            editor_tagfunc = ctx_tagfuncs["editor"]
+        except KeyError:
+            editor_tagfunc = BOOK_OPT_TAGFUNCS["editor"]
+
+        editor = editor_tagfunc(record)
+        if editor:
+            ctx_tagfuncs["editor"] = editor_tagfunc
+        else:
             msg = "both author and editor (required) tags are treated empty."
             raise MARC2BibError(msg)
-        else:
-            ctx_tagfuncs.pop("author")
 
     for tag, func in ctx_tagfuncs.items():
         tag_value = func(record)
@@ -191,7 +193,7 @@ def tags_to_bibtex(
 ) -> str:
     """Translate BibTeX tags into a BibTeX-formatted string.
 
-    See docstring of :obj:`marc2bib.convert()'` for the arguments.
+    See docstring of :obj:`marc2bib.core.convert()'` for the arguments.
     """
     if bibkey is None:
         try:

@@ -98,16 +98,16 @@ def test_allow_blank_tags(rec_sholokhov):
     assert " secondblank = { }" in output
 
 
-def test_author_or_editor(rec_clusters):
+def test_editor_and_no_author(rec_clusters):
     output = convert(rec_clusters)
     assert " author = " not in output
     assert " editor = {Jellinek, J.}" in output
 
 
-def test_author_or_editor_with_blank(rec_clusters):
-    output = convert(rec_clusters, allow_blank=True)
-    assert " author = " not in output
-    assert " editor = {Jellinek, J.}" in output
+def test_editor_from_tagfunc(rec_tsing):
+    tagfuncs = {"editor": lambda _: "Editor"}
+    output = convert(rec_tsing, tagfuncs=tagfuncs)
+    assert " editor = {Editor}" in output
 
 
 def test_callable_bibkey(rec_hargittai):
