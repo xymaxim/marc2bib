@@ -156,14 +156,14 @@ via the corresponding arguments (in parentheses) of ``convert`` and
 ``map_tags`` functions:
 
 #. ``marc2bib.hooks.remove_isbd_punctuation_hook``
-  (``remove_punctuation``, default: True) — remove terminal periods
-  and separating punctuation corresponding to MARC 21 format (see the
-  below section for details);
+   (``remove_punctuation``, default: True) — remove terminal periods
+   and separating punctuation corresponding to MARC 21 format (see the
+   below section for details).
   
 #. ``marc2bib.hooks.latexify_hook`` (``latexify``, default: True) —
-  convert tag value to make it suitable for LaTeX. Currently, it
-  escapes LaTeX special characters and normalizes number ranges by
-  replacing hyphens with en-dashes.
+   convert tag value to make it suitable for LaTeX. Currently, it
+   escapes LaTeX special characters and normalizes number ranges by
+   replacing hyphens with en-dashes.
 
 User-defined hooks
 ^^^^^^^^^^^^^^^^^^
