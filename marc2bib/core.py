@@ -59,6 +59,10 @@ COMMON_ABBREVIATIONS = (
 # fmt: on
 
 
+TagfunctionsSig = Dict[str, Callable[[Record], str]]
+PostHookSig = Callable[[str, str], str]
+
+
 def _as_bibtex(
     bibtype: str,
     bibkey: str,
@@ -74,10 +78,6 @@ def _as_bibtex(
     bibtex += "\n}\n"
 
     return bibtex
-
-
-TagfunctionsSig = Dict[str, Callable[[Record], str]]
-PostHookSig = Callable[[str, str], str]
 
 
 def map_tags(
