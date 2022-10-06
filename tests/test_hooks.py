@@ -34,6 +34,9 @@ class TestHookFunctions:
 
     def test_normalize_ranges_hook(self):
         assert "12--34" == normalize_ranges_hook("tag", "12-34")
+        assert "2000/2022" == normalize_ranges_hook(
+            "tag", "2000-2022", sep="/"
+        )
 
     def test_latexify_hook(self):
         assert r"A \& B, 12--34" == latexify_hook("tag", "A & B, 12-34")
