@@ -275,6 +275,7 @@ abbreviations)`` hook by providing an extended list of abbreviations:
 As an alternative, especially working interactively, you can just modify the corresponding value of a translated tag:
 
 .. code:: python
+	  
         from marc2bib import map_tags, tags_to_bibtex
 
 	tags = map_tags(record)
