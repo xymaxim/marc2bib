@@ -155,12 +155,12 @@ The default hooks include two hooks which execution can be controlled
 via the corresponding arguments (in parentheses) of ``convert`` and
 ``map_tags`` functions:
 
-* ``marc2bib.hooks.remove_isbd_punctuation_hook``
+#. ``marc2bib.hooks.remove_isbd_punctuation_hook``
   (``remove_punctuation``, default: True) — remove terminal periods
   and separating punctuation corresponding to MARC 21 format (see the
   below section for details);
   
-* ``marc2bib.hooks.latexify_hook`` (``latexify``, default: True) —
+#. ``marc2bib.hooks.latexify_hook`` (``latexify``, default: True) —
   convert tag value to make it suitable for LaTeX. Currently, it
   escapes LaTeX special characters and normalizes number ranges by
   replacing hyphens with en-dashes.
