@@ -48,8 +48,8 @@ data from a MARC file and convert it to a BibTeX entry:
 
 And that is it!
 	  
-Usage
-=====
+Overview
+========
 
 Convert to BibTeX or just map tags
 ----------------------------------
@@ -99,9 +99,10 @@ Tag-functions
 -------------
 
 To parse a value of BibTeX tags (fields), we use so-called
-*tag-functions*. Currently ``marc2bib`` fully supports book BibTeX
-entries—the tag-functions are defined for the related required and
-optional tags. The user can extend or override them easily:
+*tag-functions* which operate on one tag per function. Currently
+``marc2bib`` fully supports book BibTeX entries—the tag-functions are
+defined for the related required and optional tags. The user can
+extend or override them easily:
 
 .. code:: python
 
@@ -130,9 +131,10 @@ including separately.
 Default, user-defined, and pre-defined post-hooks
 -------------------------------------------------
 
-Post-hooks run at the end of translation of MARC 21 fields to BibTeX
-tags. There are *default* and *user-defined* post-hooks which execute in
-the presented order.
+While tag-functions work with parsing MARC 21 fields, post-hooks run
+at the end of translation of the parsed fields to BibTeX tags. There
+are *default* and *user-defined* post-hooks which execute in the
+presented order.
 
 The hook's function may look as follows:
 
@@ -142,7 +144,9 @@ The hook's function may look as follows:
 	      return do_something(value)
 	      
 Every hook will be called with two arguments: the tag currently
-processing and its value.
+processing and its value. 
+
+See *Cookbook* section for examples on mastering hooks.
 
 Default post-hooks
 ^^^^^^^^^^^^^^^^^^
@@ -218,6 +222,52 @@ all tests, do:
 
 	$ pytest --runall
 
+Cookbook
+========
+
+Applying hooks not for all tags
+-------------------------------
+
+Sometimes you will need to apply a hook not for all tags. With
+``apply_not_for_tags(...)`` it is possible to make an existing hook
+tag-conditional.
+
+Let us illustrate it with the following example. Suppose a title of a
+bibliographic work ends with a dot and you need to keep it. To do it,
+we can turn off the default hook (``remove_isbd_punctuation_hook``)
+and instead make it applying later for all tags except *title* tag:
+
+.. code::
+
+        from marc2bib.hooks import apply_not_for_tags
+        from marc2bib.hooks import remove_isbd_punctuation_hook
+
+	hooks = [apply_not_for_tags(remove_isbd_punctuation_hook, ["title"])]
+        convert(record, remove_punctuation=False, post_hooks=hooks)  
+
+Passing arguments to hooks
+--------------------------
+
+It is possible to customize hooks by adding keywords arguments to a
+hook's function and passing them later with
+``functools.partial()``. Suppose a title of a book ends with an
+abbreviation and you need to keep an ending period. Here is an
+example of customizing ``remove_isbd_punctuation_hook(tag, value, *,
+abbreviations)`` hook by providing an extended list of abbreviations:
+
+.. code::
+
+        from functools import partial
+
+	from marc2bib.core import COMMON_ABBREVIATIONS
+        from marc2bib.hooks import remove_isbd_punctuation_hook
+
+	abbreviations = COMMON_ABBREVIATIONS + ("abbrev.",)
+	remove_punctuation_call = partial(
+	    remove_isbd_punctuation_hook, abbreviations=abbreviations
+	)
+	
+        convert(record, remove_punctuation=False, post_hooks=[remove_punctuation_call])
 
 Acknowledgments
 ===============
