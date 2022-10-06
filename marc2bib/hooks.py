@@ -1,4 +1,5 @@
 import re
+from functools import partial
 from typing import Optional, Callable
 
 
@@ -67,9 +68,15 @@ def latexify_hook(tag: str, value: str) -> str:
     Currently, it escapes LaTeX special characters and normalizes
     number ranges by replacing hyphens with en-dashes.
     """
+    if tag == "date":
+        normalize_ranges_call = partial(normalize_ranges_hook, sep="/")
+    else:
+        normalize_ranges_call = partial(normalize_ranges_hook, sep="--")
+
     latexify = compose_hooks(
-        [escape_special_characters_hook, normalize_ranges_hook]
+        [escape_special_characters_hook, normalize_ranges_call]
     )
+        
     return latexify(tag, value)
 
 
@@ -77,8 +84,8 @@ def escape_special_characters_hook(tag: str, value: str) -> str:
     return re.sub(rf"([&%#])", r"\\\1", value)
 
 
-def normalize_ranges_hook(tag: str, value: str) -> str:
-    return re.sub(r"(\d+)-(\d+)", r"\1--\2", value)
+def normalize_ranges_hook(tag: str, value: str, *, sep: str = "--") -> str:
+    return re.sub(r"(\d+)-(\d+)", rf"\1{sep}\2", value)
 
 
 # Pre-defined hooks
