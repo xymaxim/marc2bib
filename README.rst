@@ -224,7 +224,30 @@ all tests, do:
 
 Cookbook
 ========
-	
+
+Applying hooks not for all tags
+-------------------------------
+
+Sometimes you will need to apply a hook not for all tags. With
+``apply_not_for_tags(...)`` it is possible to make an existing hook
+tag-conditional. Taking the conditional statement out of a hook could
+be useful, for example, to (temporarily) exclude it from the
+post-processing of certain record(s).
+
+Let us illustrate it with the following example. Suppose a title of a
+bibliographic work ends with a dot and you need to keep it. To do it,
+we can turn off the default hook (``remove_isbd_punctuation_hook``)
+and instead make it applying later for all tags except *title* tag:
+
+.. code::
+
+        from marc2bib.hooks import apply_not_for_tags
+
+	def hook(tag: str, value: str) -> str:
+	    ...
+
+	convert(record, post_hooks=[apply_not_for_tags(hook, ["tag"])])
+
 Passing arguments to hooks
 --------------------------
 
@@ -249,6 +272,16 @@ abbreviations)`` hook by providing an extended list of abbreviations:
 	
         convert(record, remove_punctuation=False, post_hooks=[remove_punctuation_call])
 
+As an alternative, especially working interactively, you can just modify the corresponding value of a translated tag:
+
+.. code:: python
+        from marc2bib import map_tags, tags_to_bibtex
+
+	tags = map_tags(record)
+	tags["title"] = tags["title"] + "."
+	
+        tags_to_bibtex(tags)
+	
 Acknowledgments
 ===============
 
