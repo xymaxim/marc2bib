@@ -3,7 +3,16 @@ from functools import partial
 from typing import Optional, Callable
 
 
-def compose_hooks(hooks: Optional[list[Callable]]) -> Callable:
+def compose_hooks(
+    hooks: list[Callable[[str, str], str]],
+) -> Callable[[str, str], str]:
+    """Compose a group of the given hooks into a single hook.
+
+    Hooks are applied from left to right, so that compose_hooks([f,
+    g])(tag, value) is an equivalent of (g(f(tag, value)).
+
+    This can be useful to group multiple hooks or run hooks in a row.
+    """
     def inner(tag: str, value: str) -> str:
         for hook in hooks:
             if isinstance(hook, Callable):
@@ -15,7 +24,6 @@ def compose_hooks(hooks: Optional[list[Callable]]) -> Callable:
                         "hook's function must return a string, "
                         f"not {value.__class__.__name__}"
                     )
-
             else:
                 raise ValueError("hook's function must be callable")
         return value
@@ -23,7 +31,12 @@ def compose_hooks(hooks: Optional[list[Callable]]) -> Callable:
     return inner
 
 
-def apply_not_for_tags(hook, tags: list[str]) -> Callable:
+def apply_not_for_tags(hook, tags: list[str]) -> Callable[[str, str], str]:
+    """Apply a hook only for all tags except the given ones.
+
+    Returns a tag-conditional hook wrapping a call to `hook`. As for
+    excluded tags, a new hook returns the untouched tag's value.
+    """
     def new_conditional_hook(tag: str, value: str) -> str:
         if tag in tags:
             return value
@@ -37,7 +50,7 @@ def apply_not_for_tags(hook, tags: list[str]) -> Callable:
 
 
 def remove_isbd_punctuation_hook(
-    tag: str, value: str, *, abbreviations: Optional[str] = None
+    tag: str, value: str, *, abbreviations: Optional[list[str]] = None
 ) -> str:
     terminal_chars = ".,:;+=/"
 
@@ -76,7 +89,7 @@ def latexify_hook(tag: str, value: str) -> str:
     latexify = compose_hooks(
         [escape_special_characters_hook, normalize_ranges_call]
     )
-        
+
     return latexify(tag, value)
 
 
