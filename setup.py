@@ -3,11 +3,11 @@ from setuptools import setup
 
 setup(
     name='marc2bib',
-    version='0.1.7',
+    version='0.1.8',
     url='https://github.com/xymaxim/marc2bib',
     author='Maxim Stolyarchuk',
     author_email='maxim.stolyarchuk@gmail.com',
-    description='Easily convert MARC bibliographic records to BibTeX entries',
+    description='Easily convert MARC 21 bibliographic records to BibTeX entries',
     long_description=__doc__,
     zip_safe=False,
     install_requires=[
