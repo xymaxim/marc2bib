@@ -101,7 +101,7 @@ def map_tags(
     See docstring of :obj:`marc2bib.core.convert()` for the arguments.
     """
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
-    if backend == "biblatex":
+    if version == "biblatex":
         ctx_tagfuncs["location"] = BIBLATEX_TAGFUNCS["location"]
 
     if include == "all":
@@ -213,7 +213,7 @@ def tags_to_bibtex(
     else:
         bibkey_value = bibkey
 
-    bibtex = _as_bibtex(bibtype, bibkey_value, tags, indent, do_align)
+    bibtex = _as_bibtex_str(bibtype, bibkey_value, tags, indent, do_align)
 
     return bibtex
 
