@@ -47,6 +47,12 @@ BOOK_OPT_TAGFUNCS = {
     "isbn": Record.isbn,
 }
 
+BIBLATEX_TAGFUNCS = {
+    "date": default_tagfuncs.get_year,
+    "location": default_tagfuncs.get_address,
+    
+}
+
 
 class MARC2BibError(Exception):
     pass
@@ -63,7 +69,7 @@ TagfunctionsSig = Dict[str, Callable[[Record], str]]
 PostHookSig = Callable[[str, str], str]
 
 
-def _as_bibtex(
+def _as_bibtex_str(
     bibtype: str,
     bibkey: str,
     tags: Dict[str, str],
@@ -72,12 +78,12 @@ def _as_bibtex(
 ) -> str:
     tag_width = max(map(len, tags)) if do_align else 0
 
-    bibtex = f"@{bibtype}{{{bibkey}"
+    rv = f"@{bibtype}{{{bibkey}"
     for tag, value in sorted(tags.items()):
-        bibtex += f',\n{" " * indent}{tag:<{tag_width}} = {{{value}}}'
-    bibtex += "\n}\n"
+        rv += f',\n{" " * indent}{tag:<{tag_width}} = {{{value}}}'
+    rv += "\n}\n"
 
-    return bibtex
+    return rv
 
 
 def map_tags(
@@ -95,8 +101,8 @@ def map_tags(
     See docstring of :obj:`marc2bib.core.convert()` for the arguments.
     """
     ctx_tagfuncs = BOOK_REQ_TAGFUNCS.copy()
-    if version == "biblatex":
-        ctx_tagfuncs["location"] = ctx_tagfuncs.pop("address")
+    if backend == "biblatex":
+        ctx_tagfuncs["location"] = BIBLATEX_TAGFUNCS["location"]
 
     if include == "all":
         ctx_tagfuncs.update(BOOK_OPT_TAGFUNCS)
