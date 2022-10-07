@@ -13,6 +13,7 @@ def compose_hooks(
 
     This can be useful to group multiple hooks or run hooks in a row.
     """
+
     def inner(tag: str, value: str) -> str:
         for hook in hooks:
             if isinstance(hook, Callable):
@@ -37,6 +38,7 @@ def apply_not_for(hook, tags: list[str]) -> Callable[[str, str], str]:
     Returns a tag-conditional hook wrapping a call to `hook`. As for
     excluded tags, a new hook returns the untouched tag's value.
     """
+
     def new_conditional_hook(tag: str, value: str) -> str:
         if tag in tags:
             return value

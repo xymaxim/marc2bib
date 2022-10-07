@@ -10,7 +10,7 @@ def pytest_addoption(parser):
         help="enable all tests including validation",
     )
 
-    
+
 @pytest.fixture(scope="function")
 def rec_hargittai(request):
     # This file has been downloaded from
