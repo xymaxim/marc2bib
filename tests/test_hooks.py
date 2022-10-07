@@ -7,12 +7,12 @@ from marc2bib.hooks import *
 def test_compose_hooks():
     append = lambda _, v: v + v
     multiply = lambda _, v: v * 2
-    assert "aaaa" == compose_hooks([append, multiply])("tag", "a")
+    assert "aaaa" == compose_hooks(append, multiply)("tag", "a")
 
 
 def test_compose_hooks_with_null_hook():
     with pytest.raises(TypeError):
-        compose_hooks([lambda t, v: None])("tag", "value")
+        compose_hooks(lambda t, v: None)("tag", "value")
 
 
 def test_compose_hooks_with_non_callable_hook():

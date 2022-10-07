@@ -4,7 +4,7 @@ from typing import Optional, Callable
 
 
 def compose_hooks(
-    hooks: list[Callable[[str, str], str]],
+    *hooks: list[Callable[[str, str], str]],
 ) -> Callable[[str, str], str]:
     """Compose a group of the given hooks into a single hook.
 
@@ -87,7 +87,7 @@ def latexify_hook(tag: str, value: str) -> str:
         normalize_ranges_call = partial(normalize_ranges_hook, sep="--")
 
     latexify = compose_hooks(
-        [escape_special_characters_hook, normalize_ranges_call]
+        escape_special_characters_hook, normalize_ranges_call
     )
 
     return latexify(tag, value)

@@ -172,7 +172,7 @@ def map_tags(
             tag_value = latexify_hook(tag, tag_value)
 
         if post_hooks:
-            composed = compose_hooks(post_hooks)
+            composed = compose_hooks(*post_hooks)
             tag_value = composed(tag, tag_value)
 
         blank_and_allowed = tag_value.strip() == "" and allow_blank
