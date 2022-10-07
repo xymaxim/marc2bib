@@ -229,7 +229,7 @@ Applying hooks not for all tags
 -------------------------------
 
 Sometimes you will need to apply a hook not for all tags. With
-``apply_not_for_tags(...)`` it is possible to make an existing hook
+``apply_not_for()`` it is possible to make an existing hook
 tag-conditional. Taking the conditional statement out of a hook could
 be useful, for example, to (temporarily) exclude it from the
 post-processing of certain record(s).
@@ -241,12 +241,12 @@ and instead make it applying later for all tags except *title* tag:
 
 .. code:: python
 
-        from marc2bib.hooks import apply_not_for_tags
+        from marc2bib.hooks import apply_not_for
 
 	def hook(tag: str, value: str) -> str:
 	    ...
 
-	convert(record, post_hooks=[apply_not_for_tags(hook, ["tag"])])
+	convert(record, post_hooks=[apply_not_for(hook, ["tag"])])
 
 Passing arguments to hooks
 --------------------------

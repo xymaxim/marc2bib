@@ -31,7 +31,7 @@ def compose_hooks(
     return inner
 
 
-def apply_not_for_tags(hook, tags: list[str]) -> Callable[[str, str], str]:
+def apply_not_for(hook, tags: list[str]) -> Callable[[str, str], str]:
     """Apply a hook only for all tags except the given ones.
 
     Returns a tag-conditional hook wrapping a call to `hook`. As for
